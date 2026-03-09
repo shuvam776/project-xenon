@@ -21,7 +21,7 @@ export default function BookingSuccessPage() {
         <div className="space-y-3">
           <Link 
             href="/profile" 
-            className="block w-full bg-[#5b40e6] text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition"
+            className="block w-full bg-[#2563eb] text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition"
           >
             Go to My Bookings
           </Link>

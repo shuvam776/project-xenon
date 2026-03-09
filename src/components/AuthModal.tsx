@@ -200,17 +200,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       {/* Modal Content */}
       <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col md:flex-row min-h-[500px]">
         {/* Left Side - Brand / Info (Hidden on mobile) */}
-        <div className="hidden md:flex md:w-5/12 bg-[#5b40e6] p-8 flex-col justify-between text-white relative overflow-hidden">
+        <div className="hidden md:flex md:w-5/12 bg-[#2563eb] p-8 flex-col justify-between text-white relative overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-2">
               Empowering All To Advertise
             </h2>
-            <p className="text-indigo-200">
+            <p className="text-blue-200">
               Find and buy the best media spots online.
             </p>
           </div>
 
-          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-indigo-500/30 blur-3xl"></div>
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-blue-500/30 blur-3xl"></div>
           <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-indigo-400/30 blur-3xl"></div>
 
           <div className="relative z-10">
@@ -260,7 +260,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         "kyc",
                         "verify-phone",
                       ].indexOf(step) >= i
-                        ? "bg-[#5b40e6]"
+                        ? "bg-[#2563eb]"
                         : "bg-gray-200"
                     }`}
                   />
@@ -298,9 +298,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <div className="space-y-4">
                 <button
                   onClick={() => handleRoleSelect("buyer")}
-                  className="w-full p-4 border rounded-xl hover:border-[#5b40e6] hover:bg-indigo-50 transition-all group flex items-center gap-4 text-left"
+                  className="w-full p-4 border rounded-xl hover:border-[#2563eb] hover:bg-blue-50 transition-all group flex items-center gap-4 text-left"
                 >
-                  <div className="bg-indigo-100 p-3 rounded-full text-[#5b40e6] group-hover:bg-[#5b40e6] group-hover:text-white transition-colors">
+                  <div className="bg-blue-100 p-3 rounded-full text-[#2563eb] group-hover:bg-[#2563eb] group-hover:text-white transition-colors">
                     <UserIcon size={24} />
                   </div>
                   <div>
@@ -315,9 +315,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
                 <button
                   onClick={() => handleRoleSelect("vendor")}
-                  className="w-full p-4 border rounded-xl hover:border-[#5b40e6] hover:bg-indigo-50 transition-all group flex items-center gap-4 text-left"
+                  className="w-full p-4 border rounded-xl hover:border-[#2563eb] hover:bg-blue-50 transition-all group flex items-center gap-4 text-left"
                 >
-                  <div className="bg-purple-100 p-3 rounded-full text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                  <div className="bg-purple-100 p-3 rounded-full text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                     <Building2 size={24} />
                   </div>
                   <div>
@@ -339,7 +339,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       setStep("auth");
                       setAuthMode("login");
                     }}
-                    className="text-[#5b40e6] font-medium hover:underline"
+                    className="text-[#2563eb] font-medium hover:underline"
                   >
                     Login
                   </button>
@@ -363,7 +363,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       <UserIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                       <input
                         {...signupForm.register("name")}
-                        className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none transition-shadow"
+                        className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none transition-shadow"
                         placeholder="Full Name"
                       />
                     </div>
@@ -382,7 +382,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       {...(authMode === "signup"
                         ? signupForm.register("email")
                         : loginForm.register("email"))}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none transition-shadow"
+                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none transition-shadow"
                       placeholder="Email Address"
                     />
                   </div>
@@ -405,7 +405,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       {...(authMode === "signup"
                         ? signupForm.register("password")
                         : loginForm.register("password"))}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none transition-shadow"
+                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none transition-shadow"
                       placeholder="Password"
                     />
                   </div>
@@ -423,7 +423,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#5b40e6] text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                  className="w-full bg-[#2563eb] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                   {loading
                     ? "Processing..."
@@ -475,7 +475,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     onClick={() =>
                       setAuthMode(authMode === "signup" ? "login" : "signup")
                     }
-                    className="text-[#5b40e6] text-sm hover:underline"
+                    className="text-[#2563eb] text-sm hover:underline"
                   >
                     {authMode === "signup"
                       ? "Already have an account? Login"
@@ -495,7 +495,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <input
                     {...otpForm.register("otp")}
                     maxLength={6}
-                    className="w-full text-center text-3xl tracking-[1em] font-bold py-4 border-b-2 focus:border-[#5b40e6] outline-none"
+                    className="w-full text-center text-3xl tracking-[1em] font-bold py-4 border-b-2 focus:border-[#2563eb] outline-none"
                     placeholder="000000"
                   />
                   <p className="text-xs text-gray-400 mt-2">
@@ -505,13 +505,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#5b40e6] text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                  className="w-full bg-[#2563eb] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                   {loading ? "Verifying..." : "Verify Email"}
                 </button>
                 <button
                   type="button"
-                  className="w-full text-sm text-gray-500 hover:text-[#5b40e6]"
+                  className="w-full text-sm text-gray-500 hover:text-[#2563eb]"
                 >
                   Resend Code
                 </button>
@@ -532,7 +532,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <input
                       {...kycForm.register("phone")}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none"
+                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none"
                       placeholder="+91 98765 43210"
                     />
                   </div>
@@ -552,7 +552,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <textarea
                       rows={2}
                       {...kycForm.register("address")}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none"
+                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none"
                       placeholder="Registered Address"
                     />
                   </div>
@@ -569,7 +569,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </label>
                     <input
                       {...kycForm.register("gstin")}
-                      className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                      className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] outline-none"
                       placeholder="GST Number"
                     />
                   </div>
@@ -579,7 +579,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </label>
                     <input
                       {...kycForm.register("pan")}
-                      className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                      className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] outline-none"
                       placeholder="PAN Number"
                     />
                     {kycForm.formState.errors.pan && (
@@ -596,7 +596,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   </label>
                   <input
                     {...kycForm.register("aadhaar")}
-                    className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] outline-none"
                     placeholder="Aadhaar Number"
                   />
                   {kycForm.formState.errors.aadhaar && (
@@ -617,7 +617,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#5b40e6] text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                  className="w-full bg-[#2563eb] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                   {loading ? "Submitting..." : "Submit & Verify Phone"}
                 </button>
@@ -634,7 +634,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <input
                     {...otpForm.register("otp")}
                     maxLength={6}
-                    className="w-full text-center text-3xl tracking-[1em] font-bold py-4 border-b-2 focus:border-[#5b40e6] outline-none"
+                    className="w-full text-center text-3xl tracking-[1em] font-bold py-4 border-b-2 focus:border-[#2563eb] outline-none"
                     placeholder="000000"
                   />
                   <p className="text-xs text-gray-400 mt-2">
@@ -644,7 +644,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#5b40e6] text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                  className="w-full bg-[#2563eb] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                   {loading ? "Complete Registration" : "Verify & Login"}
                 </button>

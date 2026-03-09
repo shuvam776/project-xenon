@@ -96,7 +96,7 @@ export default function BookNowButton({
       <button
         onClick={handleBookNow}
         disabled={checking}
-        className="block w-full text-center bg-gray-50 hover:bg-[#5b40e6] hover:text-white text-gray-900 font-semibold py-3 rounded-xl transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        className="block w-full text-center bg-gray-50 hover:bg-[#2563eb] hover:text-white text-gray-900 font-semibold py-3 rounded-xl transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {checking ? "Checking..." : "Book Now"}
       </button>

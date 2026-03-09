@@ -43,7 +43,7 @@ export default function ContactPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Get in <span className="text-[#5b40e6]">Touch</span>
+            Get in <span className="text-[#2563eb]">Touch</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Have questions? We'd love to hear from you. Send us a message and
@@ -55,8 +55,8 @@ export default function ContactPage() {
           {/* Contact Info Cards */}
           <div className="space-y-6">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <div className="p-3 bg-indigo-50 rounded-xl w-fit mb-4">
-                <Mail className="w-6 h-6 text-[#5b40e6]" />
+              <div className="p-3 bg-blue-50 rounded-xl w-fit mb-4">
+                <Mail className="w-6 h-6 text-[#2563eb]" />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Email</h3>
               <p className="text-gray-600 text-sm mb-2">
@@ -64,7 +64,7 @@ export default function ContactPage() {
               </p>
               <a
                 href="mailto:support@hoardspace.com"
-                className="text-[#5b40e6] font-medium hover:underline"
+                className="text-[#2563eb] font-medium hover:underline"
               >
                 support@hoardspace.com
               </a>
@@ -80,7 +80,7 @@ export default function ContactPage() {
               </p>
               <a
                 href="tel:+919876543210"
-                className="text-[#5b40e6] font-medium hover:underline"
+                className="text-[#2563eb] font-medium hover:underline"
               >
                 +91 98765 43210
               </a>
@@ -129,7 +129,7 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none"
                       placeholder="John Doe"
                     />
                   </div>
@@ -144,7 +144,7 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none"
                       placeholder="john@example.com"
                     />
                   </div>
@@ -160,7 +160,7 @@ export default function ContactPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none"
                       placeholder="+91 98765 43210"
                     />
                   </div>
@@ -175,7 +175,7 @@ export default function ContactPage() {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none"
                       placeholder="How can we help?"
                     />
                   </div>
@@ -191,7 +191,7 @@ export default function ContactPage() {
                     onChange={handleChange}
                     required
                     rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none resize-none"
                     placeholder="Tell us more about your inquiry..."
                   />
                 </div>
@@ -199,7 +199,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#5b40e6] text-white py-4 px-6 rounded-xl font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
+                  className="w-full bg-[#2563eb] text-white py-4 px-6 rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
                 >
                   {isSubmitting ? (
                     <>

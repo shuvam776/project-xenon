@@ -216,7 +216,7 @@ export default function BookingPage() {
           contact: user?.phone || "",
         },
         theme: {
-          color: "#5b40e6",
+          color: "#2563eb",
         },
       };
 
@@ -232,7 +232,7 @@ export default function BookingPage() {
   if (authChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#5b40e6]" size={40} />
+        <Loader2 className="animate-spin text-[#2563eb]" size={40} />
       </div>
     );
   }
@@ -240,7 +240,7 @@ export default function BookingPage() {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#5b40e6]" />
+        <Loader2 className="animate-spin text-[#2563eb]" />
       </div>
     );
   if (!hoarding)
@@ -311,7 +311,7 @@ export default function BookingPage() {
 
           {/* Right: Booking Form */}
           <div className="md:col-span-1">
-            <div className="bg-white rounded-2xl p-6 shadow-lg shadow-indigo-100 border border-indigo-50 sticky top-24">
+            <div className="bg-white rounded-2xl p-6 shadow-lg shadow-blue-100 border border-blue-50 sticky top-24">
               <h3 className="text-lg font-bold text-gray-900 mb-4">
                 Book Dates
               </h3>
@@ -348,8 +348,8 @@ export default function BookingPage() {
                 </div>
               )}
 
-              <div className="bg-indigo-50 p-3 rounded-lg flex items-center gap-2 mb-6">
-                <ShieldCheck size={16} className="text-[#5b40e6]" />
+              <div className="bg-blue-50 p-3 rounded-lg flex items-center gap-2 mb-6">
+                <ShieldCheck size={16} className="text-[#2563eb]" />
                 <span className="text-xs text-indigo-800 font-medium">
                   Secure Payment by Razorpay
                 </span>
@@ -358,7 +358,7 @@ export default function BookingPage() {
               <button
                 onClick={handlePayment}
                 disabled={processing}
-                className="w-full bg-[#5b40e6] text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition"
+                className="w-full bg-[#2563eb] text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition"
               >
                 {processing ? (
                   <Loader2 className="animate-spin mx-auto" />

@@ -89,19 +89,19 @@ export async function sendOTPEmail(email: string, otp: string): Promise<EmailRes
         <title>Verify Your Email - HoardSpace</title>
       </head>
       <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #5b40e6 0%, #4834b8 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
           <h1 style="color: white; margin: 0; font-size: 28px;">HoardSpace</h1>
           <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">Outdoor Advertising Platform</p>
         </div>
         
         <div style="background: #ffffff; padding: 40px 30px; border: 1px solid #e0e0e0; border-top: none;">
-          <h2 style="color: #5b40e6; margin-top: 0;">Verify Your Email Address</h2>
+          <h2 style="color: #2563eb; margin-top: 0;">Verify Your Email Address</h2>
           
           <p style="font-size: 16px; color: #555;">Thank you for registering with HoardSpace! Please use the verification code below to complete your registration:</p>
           
-          <div style="background: #f8f9fa; border: 2px dashed #5b40e6; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
+          <div style="background: #f8f9fa; border: 2px dashed #2563eb; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
             <div style="font-size: 14px; color: #666; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Your Verification Code</div>
-            <div style="font-size: 36px; font-weight: bold; color: #5b40e6; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</div>
+            <div style="font-size: 36px; font-weight: bold; color: #2563eb; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</div>
           </div>
           
           <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
@@ -116,7 +116,7 @@ export async function sendOTPEmail(email: string, otp: string): Promise<EmailRes
         <div style="background: #f8f9fa; padding: 20px 30px; text-align: center; border-radius: 0 0 10px 10px; border: 1px solid #e0e0e0; border-top: none;">
           <p style="margin: 0; font-size: 12px; color: #999;">
             © ${new Date().getFullYear()} HoardSpace. All rights reserved.<br>
-            <a href="https://hoardspace.com" style="color: #5b40e6; text-decoration: none;">Visit our website</a>
+            <a href="https://hoardspace.com" style="color: #2563eb; text-decoration: none;">Visit our website</a>
           </p>
         </div>
       </body>
@@ -155,17 +155,17 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<Ema
         <title>Welcome to HoardSpace</title>
       </head>
       <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #5b40e6 0%, #4834b8 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
           <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to HoardSpace! 🎉</h1>
         </div>
         
         <div style="background: #ffffff; padding: 40px 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
-          <h2 style="color: #5b40e6; margin-top: 0;">Hi ${name}!</h2>
+          <h2 style="color: #2563eb; margin-top: 0;">Hi ${name}!</h2>
           
           <p style="font-size: 16px; color: #555;">Your email has been successfully verified. Welcome to HoardSpace - India's leading outdoor advertising platform!</p>
           
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <h3 style="color: #5b40e6; margin-top: 0;">Get Started:</h3>
+            <h3 style="color: #2563eb; margin-top: 0;">Get Started:</h3>
             <ul style="color: #555; padding-left: 20px;">
               <li>Browse thousands of premium hoarding locations</li>
               <li>List your advertising spaces and reach more clients</li>
@@ -175,10 +175,10 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<Ema
           </div>
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://hoardspace.in/profile" style="display: inline-block; background: #5b40e6; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">Complete Your Profile</a>
+            <a href="https://hoardspace.in/profile" style="display: inline-block; background: #2563eb; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">Complete Your Profile</a>
           </div>
           
-          <p style="font-size: 14px; color: #777; margin-top: 30px;">Need help? Our support team is here for you at <a href="mailto:support@hoardspace.com" style="color: #5b40e6;">support@hoardspace.com</a></p>
+          <p style="font-size: 14px; color: #777; margin-top: 30px;">Need help? Our support team is here for you at <a href="mailto:support@hoardspace.com" style="color: #2563eb;">support@hoardspace.com</a></p>
         </div>
         
         <div style="text-align: center; padding: 20px;">

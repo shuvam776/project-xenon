@@ -152,7 +152,7 @@ export default function SearchBar() {
               }}
               onFocus={() => setShowSuggestions(true)}
               placeholder="Search by city (e.g., Mumbai, Maharashtra)"
-              className="w-full px-4 py-3.5 pl-11 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5b40e6] focus:border-[#5b40e6] outline-none transition-all text-sm font-medium text-gray-900"
+              className="w-full px-4 py-3.5 pl-11 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2563eb] focus:border-[#2563eb] outline-none transition-all text-sm font-medium text-gray-900"
             />
             <MapPin
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
@@ -162,7 +162,7 @@ export default function SearchBar() {
               type="button"
               onClick={handleGetLocation}
               disabled={isGettingLocation}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#5b40e6] hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#2563eb] hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
               title="Use current location"
             >
               <Navigation
@@ -179,7 +179,7 @@ export default function SearchBar() {
                 <button
                   key={index}
                   onClick={() => handleCitySelect(cityObj)}
-                  className="w-full px-4 py-3 text-left hover:bg-indigo-50 transition-colors flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                  className="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors flex items-center gap-3 border-b border-gray-100 last:border-b-0"
                 >
                   <MapPin size={16} className="text-gray-400 shrink-0" />
                   <span className="text-sm font-medium text-gray-900">
@@ -199,7 +199,7 @@ export default function SearchBar() {
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5b40e6] focus:border-[#5b40e6] outline-none transition-all bg-white text-sm font-medium text-gray-700"
+            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2563eb] focus:border-[#2563eb] outline-none transition-all bg-white text-sm font-medium text-gray-700"
           >
             <option value="">All Types</option>
             {HOARDING_TYPES.map((type) => (
@@ -214,7 +214,7 @@ export default function SearchBar() {
         <div className="md:col-span-3 flex items-end">
           <button
             onClick={handleSearch}
-            className="w-full bg-[#5b40e6] hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="w-full bg-[#2563eb] hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             <Search size={20} />
             Search

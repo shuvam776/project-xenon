@@ -21,7 +21,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section with Search */}
-      <div className="bg-gradient-to-br from-[#5b40e6] via-indigo-600 to-purple-600 text-white py-16 px-4 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#2563eb] via-blue-600 to-blue-600 text-white py-16 px-4 relative overflow-hidden">
         {/* Decorative Elements */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -32,7 +32,7 @@ export default async function Home() {
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
             Find the Perfect Hoarding Space
           </h1>
-          <p className="text-xl md:text-2xl text-indigo-100 max-w-3xl mx-auto mb-8">
+          <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-8">
             Discover and book premium outdoor advertising locations across top
             cities in India.
           </p>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -31,7 +32,7 @@ interface Hoarding {
   };
 }
 
-export default function SearchPage() {
+function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const city = searchParams.get("city");
@@ -99,11 +100,11 @@ export default function SearchPage() {
                     Filters:
                   </span>
                   {city && (
-                    <span className="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold flex items-center gap-1">
+                    <span className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold flex items-center gap-1">
                       📍 {city}
                       <button
                         onClick={() => removeFilter("city")}
-                        className="ml-1 hover:bg-indigo-200 rounded-full p-0.5"
+                        className="ml-1 hover:bg-blue-200 rounded-full p-0.5"
                       >
                         <X size={14} />
                       </button>
@@ -136,7 +137,7 @@ export default function SearchPage() {
         <div className="max-w-7xl mx-auto px-4 py-8">
           {loading ? (
             <div className="text-center py-20">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
               <p className="mt-4 text-gray-600">Loading hoardings...</p>
             </div>
           ) : hoardings.length === 0 ? (
@@ -151,7 +152,7 @@ export default function SearchPage() {
                   {(city || type) && (
                     <button
                       onClick={clearFilters}
-                      className="text-indigo-600 hover:text-indigo-700 font-medium underline"
+                      className="text-blue-600 hover:text-blue-700 font-medium underline"
                     >
                       clear all filters
                     </button>
@@ -160,7 +161,7 @@ export default function SearchPage() {
                 </p>
                 <Link
                   href="/"
-                  className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+                  className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors"
                 >
                   Back to Home
                 </Link>
@@ -186,7 +187,7 @@ export default function SearchPage() {
                         <span className="text-sm font-medium">No Image</span>
                       </div>
                     )}
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-[#5b40e6] uppercase shadow-sm">
+                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-[#2563eb] uppercase shadow-sm">
                       {hoarding.type}
                     </div>
                   </div>
@@ -210,7 +211,7 @@ export default function SearchPage() {
                           Dimensions
                         </p>
                         <div className="flex items-center gap-1.5 text-gray-700 font-medium text-sm">
-                          <Ruler size={14} className="text-[#5b40e6]" />
+                          <Ruler size={14} className="text-[#2563eb]" />
                           {hoarding.dimensions.width}' x{" "}
                           {hoarding.dimensions.height}'
                         </div>
@@ -230,7 +231,7 @@ export default function SearchPage() {
                             </span>
                           </div>
                           {(hoarding.minimumBookingAmount || 0) > 0 && (
-                            <div className="text-xs text-indigo-600 font-medium">
+                            <div className="text-xs text-blue-600 font-medium">
                               Min Booking: ₹
                               {hoarding.minimumBookingAmount.toLocaleString(
                                 "en-IN",
@@ -258,5 +259,22 @@ export default function SearchPage() {
         onClose={() => setShowAuthModal(false)}
       />
     </>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading search results...</p>
+          </div>
+        </div>
+      }
+    >
+      <SearchPageContent />
+    </Suspense>
   );
 }

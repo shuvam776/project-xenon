@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
   Menu,
-  ShoppingBag,
   User,
   X,
   MapPin,
@@ -54,7 +53,7 @@ export default function Navbar() {
   return (
     <>
       <div className="fixed top-0 left-0 right-0 w-full z-50">
-        <nav className="bg-gradient-to-r from-[#5b40e6] to-[#4834b8] text-white shadow-sm transition-all duration-300">
+        <nav className="bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] text-white shadow-sm transition-all duration-300">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between gap-4 md:h-20">
               {/* Left: Mobile Menu & Logo */}
@@ -132,19 +131,6 @@ export default function Navbar() {
                     </span>
                   </button>
                 )}
-
-                <Link
-                  href="/cart"
-                  className="flex items-center gap-2 rounded-lg py-2 px-3 hover:bg-white/10 transition-colors"
-                >
-                  <ShoppingBag size={22} className="text-white" />
-                  <div className="hidden sm:flex flex-col leading-none">
-                    <span className="text-xs font-medium text-white/90">
-                      Your
-                    </span>
-                    <span className="text-sm font-bold">Bag</span>
-                  </div>
-                </Link>
               </div>
             </div>
           </div>
@@ -162,7 +148,7 @@ export default function Navbar() {
                 >
                   <MapPin
                     size={14}
-                    className="text-[#5b40e6] group-hover:scale-110 transition-transform"
+                    className="text-[#2563eb] group-hover:scale-110 transition-transform"
                   />
                   {city.name}
                 </Link>
@@ -182,7 +168,7 @@ export default function Navbar() {
           />
 
           {/* Sidebar */}
-          <div className="fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-[#5b40e6] to-[#4834b8] shadow-2xl transition-transform">
+          <div className="fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-[#2563eb] to-[#1d4ed8] shadow-2xl transition-transform">
             {/* Header with Welcome */}
             <div className="relative bg-white/10 backdrop-blur-md p-6 border-b border-white/20">
               <button
@@ -212,7 +198,7 @@ export default function Navbar() {
                     setIsMenuOpen(false);
                     setIsAuthOpen(true);
                   }}
-                  className="w-full bg-white text-[#5b40e6] py-2 px-4 rounded-lg font-semibold hover:bg-white/90 transition-colors shadow-lg"
+                  className="w-full bg-white text-[#2563eb] py-2 px-4 rounded-lg font-semibold hover:bg-white/90 transition-colors shadow-lg"
                 >
                   Login / Register
                 </button>
@@ -244,6 +230,19 @@ export default function Navbar() {
                     </div>
                     <span className="font-medium">My Profile</span>
                   </Link>
+
+                  {user.role === "buyer" && (
+                    <Link
+                      href="/buyer/dashboard"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group"
+                    >
+                      <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                        <LayoutDashboard size={20} />
+                      </div>
+                      <span className="font-medium">My Dashboard</span>
+                    </Link>
+                  )}
 
                   {user.role === "vendor" && (
                     <Link

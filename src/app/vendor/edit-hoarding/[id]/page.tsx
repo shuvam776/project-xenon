@@ -129,7 +129,7 @@ export default function EditHoardingPage() {
   if (!authChecked || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-[#5b40e6]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
       </div>
     );
   }
@@ -316,7 +316,7 @@ export default function EditHoardingPage() {
                   <input
                     {...register("name")}
                     placeholder="e.g. Billboard at Birsha Chawk"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   />
                   {errors.name && (
                     <p className="text-xs text-red-500 mt-1">
@@ -332,7 +332,7 @@ export default function EditHoardingPage() {
                     {...register("description")}
                     rows={3}
                     placeholder="Describe visibility, traffic, etc."
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   />
                 </div>
               </div>
@@ -390,7 +390,7 @@ export default function EditHoardingPage() {
                 <button
                   type="button"
                   onClick={() => setShowMap(!showMap)}
-                  className="text-sm text-[#5b40e6] hover:underline flex items-center gap-1"
+                  className="text-sm text-[#2563eb] hover:underline flex items-center gap-1"
                 >
                   <MapPin size={16} />
                   {showMap ? "Hide Map" : "Pick on Map"}
@@ -412,7 +412,7 @@ export default function EditHoardingPage() {
                       {...register("address")}
                       value={watch("address") || ""}
                       placeholder="Exact street address"
-                      className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                      className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                     />
                   </div>
                   {errors.address && (
@@ -432,10 +432,10 @@ export default function EditHoardingPage() {
                       value={watch("zipCode") || ""}
                       onChange={handlePincodeChange}
                       placeholder="Enter 6-digit pincode"
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                     />
                     {pincodeLoading && (
-                      <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-[#5b40e6]" />
+                      <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-[#2563eb]" />
                     )}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
@@ -451,7 +451,7 @@ export default function EditHoardingPage() {
                     {...register("city")}
                     value={watch("city") || ""}
                     placeholder="e.g. Mumbai"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   />
                   {errors.city && (
                     <p className="text-xs text-red-500 mt-1">
@@ -467,7 +467,7 @@ export default function EditHoardingPage() {
                     {...register("area")}
                     value={watch("area") || ""}
                     placeholder="e.g. Andheri West"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   />
                   {errors.area && (
                     <p className="text-xs text-red-500 mt-1">
@@ -483,7 +483,7 @@ export default function EditHoardingPage() {
                     {...register("state")}
                     value={watch("state") || ""}
                     placeholder="State"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   />
                   {errors.state && (
                     <p className="text-xs text-red-500 mt-1">
@@ -506,7 +506,7 @@ export default function EditHoardingPage() {
                   </label>
                   <select
                     {...register("type")}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   >
                     <option value="Billboard">Billboard</option>
                     <option value="Unipole">Unipole</option>
@@ -522,7 +522,7 @@ export default function EditHoardingPage() {
                   </label>
                   <select
                     {...register("lightingType")}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   >
                     <option value="Non-Lit">Non-Lit</option>
                     <option value="Lit">Lit</option>
@@ -539,14 +539,14 @@ export default function EditHoardingPage() {
                       {...register("width", { valueAsNumber: true })}
                       type="number"
                       placeholder="Width"
-                      className="w-1/2 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                      className="w-1/2 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                     />
                     <span className="self-center text-gray-400">x</span>
                     <input
                       {...register("height", { valueAsNumber: true })}
                       type="number"
                       placeholder="Height"
-                      className="w-1/2 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                      className="w-1/2 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                     />
                   </div>
                   {(errors.width || errors.height) && (
@@ -565,7 +565,7 @@ export default function EditHoardingPage() {
                       {...register("pricePerMonth", { valueAsNumber: true })}
                       type="number"
                       placeholder="0.00"
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                     />
                   </div>
                   {errors.pricePerMonth && (
@@ -588,7 +588,7 @@ export default function EditHoardingPage() {
                       })}
                       type="number"
                       placeholder="0.00"
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
@@ -609,7 +609,7 @@ export default function EditHoardingPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 bg-[#5b40e6] text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200 disabled:opacity-50"
+                className="flex-1 bg-[#2563eb] text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 disabled:opacity-50"
               >
                 {isSubmitting ? "Updating..." : "Update Hoarding"}
               </button>

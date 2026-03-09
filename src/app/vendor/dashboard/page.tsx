@@ -149,7 +149,7 @@ export default function VendorDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-[#5b40e6]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
       </div>
     );
   }
@@ -164,7 +164,7 @@ export default function VendorDashboard() {
         <p className="text-gray-600">{errorObj.text}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           Retry
         </button>
@@ -186,7 +186,7 @@ export default function VendorDashboard() {
           </div>
           <Link
             href="/vendor/add-hoarding"
-            className="inline-flex items-center gap-2 bg-[#5b40e6] text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
+            className="inline-flex items-center gap-2 bg-[#2563eb] text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
           >
             <Plus size={20} /> List New Hoarding
           </Link>
@@ -230,7 +230,7 @@ export default function VendorDashboard() {
               <p>No hoardings listed yet.</p>
               <Link
                 href="/vendor/add-hoarding"
-                className="text-indigo-600 font-medium hover:underline mt-2 inline-block"
+                className="text-blue-600 font-medium hover:underline mt-2 inline-block"
               >
                 Create your first listing
               </Link>
@@ -258,7 +258,7 @@ export default function VendorDashboard() {
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#5b40e6] transition-colors">
+                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#2563eb] transition-colors">
                           {item.name}
                         </h3>
                         <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
@@ -294,7 +294,7 @@ export default function VendorDashboard() {
                       <div className="flex gap-2">
                         <Link
                           href={`/vendor/edit-hoarding/${item._id}`}
-                          className="flex items-center gap-1 px-4 py-2 bg-indigo-50 text-[#5b40e6] rounded-lg hover:bg-indigo-100 transition-colors font-medium text-sm"
+                          className="flex items-center gap-1 px-4 py-2 bg-blue-50 text-[#2563eb] rounded-lg hover:bg-blue-100 transition-colors font-medium text-sm"
                         >
                           <Edit size={16} /> Edit
                         </Link>

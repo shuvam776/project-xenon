@@ -43,7 +43,7 @@ export default function HoardingsClient({ hoardings }: HoardingsClientProps) {
           {sortedCities.map((city) => (
             <section key={city} className="space-y-6">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-1 rounded-full bg-[#5b40e6]"></div>
+                <div className="h-10 w-1 rounded-full bg-[#2563eb]"></div>
                 <h2 className="text-2xl font-bold text-gray-900">{city}</h2>
                 <span className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200">
                   {groupedHoardings[city].length} location
@@ -70,7 +70,7 @@ export default function HoardingsClient({ hoardings }: HoardingsClientProps) {
                           <span className="text-sm font-medium">No Image</span>
                         </div>
                       )}
-                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-[#5b40e6] uppercase shadow-sm">
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-[#2563eb] uppercase shadow-sm">
                         {hoarding.type}
                       </div>
                     </div>
@@ -94,7 +94,7 @@ export default function HoardingsClient({ hoardings }: HoardingsClientProps) {
                             Dimensions
                           </p>
                           <div className="flex items-center gap-1.5 text-gray-700 font-medium text-sm">
-                            <Ruler size={14} className="text-[#5b40e6]" />
+                            <Ruler size={14} className="text-[#2563eb]" />
                             {hoarding.dimensions.width}' x{" "}
                             {hoarding.dimensions.height}'
                           </div>
@@ -114,7 +114,7 @@ export default function HoardingsClient({ hoardings }: HoardingsClientProps) {
                               </span>
                             </div>
                             {(hoarding.minimumBookingAmount || 0) > 0 && (
-                              <div className="text-xs text-indigo-600 font-medium">
+                              <div className="text-xs text-blue-600 font-medium">
                                 Min Booking: ₹
                                 {hoarding.minimumBookingAmount.toLocaleString(
                                   "en-IN",

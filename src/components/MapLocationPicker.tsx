@@ -128,7 +128,7 @@ export default function MapLocationPicker({
   if (!isLoaded) {
     return (
       <div className="w-full h-[400px] bg-gray-100 rounded-xl flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#5b40e6]" size={32} />
+        <Loader2 className="animate-spin text-[#2563eb]" size={32} />
       </div>
     );
   }
@@ -144,7 +144,7 @@ export default function MapLocationPicker({
           type="button"
           onClick={handleUseCurrentLocation}
           disabled={loading}
-          className="text-sm text-[#5b40e6] hover:underline disabled:opacity-50"
+          className="text-sm text-[#2563eb] hover:underline disabled:opacity-50"
         >
           {loading ? "Getting location..." : "Use Current Location"}
         </button>

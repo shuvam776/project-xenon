@@ -52,7 +52,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded bg-[#5b40e6] group-hover:bg-[#4834b8] transition-colors">
+              <div className="flex h-10 w-10 items-center justify-center rounded bg-[#2563eb] group-hover:bg-[#1d4ed8] transition-colors">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -83,14 +83,14 @@ export default function Footer() {
             <div className="space-y-3">
               <a
                 href="mailto:support@hoardspace.com"
-                className="flex items-center gap-2 text-sm hover:text-[#5b40e6] transition-colors"
+                className="flex items-center gap-2 text-sm hover:text-[#2563eb] transition-colors"
               >
                 <Mail size={16} />
                 <span>support@hoardspace.com</span>
               </a>
               <a
                 href="tel:+911234567890"
-                className="flex items-center gap-2 text-sm hover:text-[#5b40e6] transition-colors"
+                className="flex items-center gap-2 text-sm hover:text-[#2563eb] transition-colors"
               >
                 <Phone size={16} />
                 <span>+91 123 456 7890</span>
@@ -116,7 +116,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm hover:text-[#5b40e6] transition-colors"
+                    className="text-sm hover:text-[#2563eb] transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -135,7 +135,7 @@ export default function Footer() {
                 <li key={category.name}>
                   <Link
                     href={category.href}
-                    className="text-sm hover:text-[#5b40e6] transition-colors"
+                    className="text-sm hover:text-[#2563eb] transition-colors"
                   >
                     {category.name}
                   </Link>
@@ -154,7 +154,7 @@ export default function Footer() {
                 <li key={city.name}>
                   <Link
                     href={city.href}
-                    className="text-sm hover:text-[#5b40e6] transition-colors"
+                    className="text-sm hover:text-[#2563eb] transition-colors"
                   >
                     {city.name}
                   </Link>
@@ -177,7 +177,7 @@ export default function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#5b40e6] flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook size={18} />
@@ -186,7 +186,7 @@ export default function Footer() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#5b40e6] flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter size={18} />
@@ -195,7 +195,7 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#5b40e6] flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={18} />
@@ -204,7 +204,7 @@ export default function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#5b40e6] flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin size={18} />
@@ -220,7 +220,7 @@ export default function Footer() {
               <Fragment key={link.name}>
                 <Link
                   href={link.href}
-                  className="text-sm hover:text-[#5b40e6] transition-colors"
+                  className="text-sm hover:text-[#2563eb] transition-colors"
                 >
                   {link.name}
                 </Link>

@@ -158,7 +158,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5b40e6]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563eb]"></div>
       </div>
     );
   }
@@ -170,7 +170,7 @@ export default function ProfilePage() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header / Profile Card */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-          <div className="bg-gradient-to-r from-[#5b40e6] to-[#4834b8] h-32 relative">
+          <div className="bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] h-32 relative">
             <div className="absolute top-4 right-4 flex gap-3">
               {user.role === "admin" && (
                 <Link
@@ -194,7 +194,7 @@ export default function ProfilePage() {
             <div className="relative flex justify-between items-end -mt-12 mb-6">
               <div className="flex items-end gap-6">
                 <div className="h-24 w-24 rounded-2xl bg-white p-1 shadow-lg">
-                  <div className="h-full w-full rounded-xl bg-indigo-50 flex items-center justify-center text-[#5b40e6]">
+                  <div className="h-full w-full rounded-xl bg-blue-50 flex items-center justify-center text-[#2563eb]">
                     {user.image ? (
                       <img
                         src={user.image}
@@ -271,6 +271,29 @@ export default function ProfilePage() {
                 </div>
               </div>
 
+              {/* Buyer Dashboard Option */}
+              {user.role === "buyer" && (
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                    Buyer Controls
+                  </h3>
+                  <div className="bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] rounded-xl p-5 text-white shadow-lg shadow-blue-200">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-lg font-bold">My Bookings</h4>
+                    </div>
+                    <p className="text-blue-100 text-sm mb-4">
+                      View and manage your hoarding bookings.
+                    </p>
+                    <button
+                      onClick={() => router.push("/buyer/dashboard")}
+                      className="w-full bg-white text-[#2563eb] font-bold py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
+                    >
+                      Go to Dashboard
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Vendor Dashboard Option */}
               {user.role === "vendor" &&
                 (user.kycStatus === "approved" ||
@@ -279,16 +302,16 @@ export default function ProfilePage() {
                     <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
                       Vendor Controls
                     </h3>
-                    <div className="bg-gradient-to-br from-[#5b40e6] to-[#4834b8] rounded-xl p-5 text-white shadow-lg shadow-indigo-200">
+                    <div className="bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] rounded-xl p-5 text-white shadow-lg shadow-blue-200">
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="text-lg font-bold">Manage Hoardings</h4>
                       </div>
-                      <p className="text-indigo-100 text-sm mb-4">
+                      <p className="text-blue-100 text-sm mb-4">
                         Add, edit, and track your property listings.
                       </p>
                       <button
                         onClick={() => router.push("/vendor/dashboard")}
-                        className="w-full bg-white text-[#5b40e6] font-bold py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
+                        className="w-full bg-white text-[#2563eb] font-bold py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
                       >
                         Go to Dashboard
                       </button>
@@ -360,7 +383,7 @@ export default function ProfilePage() {
           user.kycStatus === "rejected") && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-indigo-100 p-2 rounded-lg text-[#5b40e6]">
+              <div className="bg-blue-100 p-2 rounded-lg text-[#2563eb]">
                 <ShieldCheck size={24} />
               </div>
               <div>
@@ -388,8 +411,8 @@ export default function ProfilePage() {
 
             {showOtp ? (
               <div className="space-y-6 transition-all duration-300 ease-in-out">
-                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-6 text-center">
-                  <p className="text-sm text-indigo-700 mb-4">
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 text-center">
+                  <p className="text-sm text-blue-700 mb-4">
                     We have sent a verification code to{" "}
                     <span className="font-semibold">{phoneToVerify}</span>
                   </p>
@@ -402,14 +425,14 @@ export default function ProfilePage() {
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
                       maxLength={6}
-                      className="w-full text-center text-2xl tracking-[0.5em] font-bold py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#5b40e6] outline-none transition-all uppercase"
+                      className="w-full text-center text-2xl tracking-[0.5em] font-bold py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#2563eb] outline-none transition-all uppercase"
                       placeholder="------"
                       required
                     />
                     <button
                       type="submit"
                       disabled={verifyingOtp}
-                      className="w-full bg-[#5b40e6] text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 shadow-lg shadow-indigo-200"
+                      className="w-full bg-[#2563eb] text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 shadow-lg shadow-blue-200"
                     >
                       {verifyingOtp ? "Verifying..." : "Verify & Submit"}
                     </button>
@@ -437,7 +460,7 @@ export default function ProfilePage() {
                       <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                       <input
                         {...kycForm.register("phone")}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none transition-all"
                         placeholder="+91 98765 43210"
                       />
                     </div>
@@ -456,7 +479,7 @@ export default function ProfilePage() {
                       <Building2 className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                       <input
                         {...kycForm.register("companyName")}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none transition-all"
                         placeholder="Business Name"
                       />
                     </div>
@@ -471,7 +494,7 @@ export default function ProfilePage() {
                       <textarea
                         rows={3}
                         {...kycForm.register("address")}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#5b40e6] focus:border-transparent outline-none transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none transition-all"
                         placeholder="Full Address"
                       />
                     </div>
@@ -486,7 +509,7 @@ export default function ProfilePage() {
                     </label>
                     <input
                       {...kycForm.register("gstin")}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#5b40e6] outline-none transition-all"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#2563eb] outline-none transition-all"
                       placeholder="GSTIN Number"
                     />
                   </div>
@@ -497,7 +520,7 @@ export default function ProfilePage() {
                     </label>
                     <input
                       {...kycForm.register("pan")}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#5b40e6] outline-none transition-all"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#2563eb] outline-none transition-all"
                       placeholder="PAN Number"
                     />
                     {kycForm.formState.errors.pan && (
@@ -513,7 +536,7 @@ export default function ProfilePage() {
                     </label>
                     <input
                       {...kycForm.register("aadhaar")}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#5b40e6] outline-none transition-all"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#2563eb] outline-none transition-all"
                       placeholder="Aadhaar Number"
                     />
                     {kycForm.formState.errors.aadhaar && (
@@ -528,7 +551,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={kycSubmitting}
-                    className="bg-[#5b40e6] text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 shadow-lg shadow-indigo-200"
+                    className="bg-[#2563eb] text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 shadow-lg shadow-blue-200"
                   >
                     {kycSubmitting ? "Submitting..." : "Submit KYC Details"}
                   </button>

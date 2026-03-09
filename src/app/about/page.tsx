@@ -7,7 +7,7 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            About <span className="text-[#5b40e6]">HoardSpace</span>
+            About <span className="text-[#2563eb]">HoardSpace</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             India's leading platform for outdoor advertising spaces
@@ -17,8 +17,8 @@ export default function AboutPage() {
         {/* Mission */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-indigo-50 rounded-xl">
-              <Target className="w-8 h-8 text-[#5b40e6]" />
+            <div className="p-3 bg-blue-50 rounded-xl">
+              <Target className="w-8 h-8 text-[#2563eb]" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Our Mission</h2>
           </div>
@@ -60,7 +60,7 @@ export default function AboutPage() {
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="p-3 bg-purple-50 rounded-xl w-fit mb-4">
-              <Award className="w-6 h-6 text-purple-600" />
+              <Award className="w-6 h-6 text-blue-600" />
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">
               Transparent Pricing
@@ -86,7 +86,7 @@ export default function AboutPage() {
         </div>
 
         {/* Stats */}
-        <div className="bg-gradient-to-r from-[#5b40e6] to-[#4834b8] rounded-2xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] rounded-2xl shadow-lg p-8 text-white">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl md:text-4xl font-bold mb-2">500+</div>

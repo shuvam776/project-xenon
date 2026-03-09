@@ -1,6 +1,9 @@
 /**
  * Script to create an admin user
  * Run with: node scripts/create-admin.js
+ *
+ * SECURITY: Requires ADMIN_CREATION_SECRET in .env file
+ * This prevents unauthorized admin user creation
  */
 
 // Load environment variables from .env file
@@ -9,6 +12,20 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const readline = require("readline");
+
+// Security check - require admin creation secret
+const ADMIN_CREATION_SECRET = process.env.ADMIN_CREATION_SECRET;
+
+if (!ADMIN_CREATION_SECRET) {
+  console.error("\n❌ SECURITY ERROR: ADMIN_CREATION_SECRET is not set\n");
+  console.log(
+    "For security, this script requires ADMIN_CREATION_SECRET in your .env file.",
+  );
+  console.log("Add this to your .env:");
+  console.log("ADMIN_CREATION_SECRET=your-secret-key-here\n");
+  console.log("⚠️  Keep this secret secure and never commit it to git!\n");
+  process.exit(1);
+}
 
 // MongoDB connection URI from environment variable
 const MONGODB_URI = process.env.MONGODB_URI;

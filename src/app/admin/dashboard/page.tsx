@@ -366,7 +366,7 @@ export default function AdminDashboard() {
   if (loading || !authChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-[#5b40e6]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
       </div>
     );
   }
@@ -377,7 +377,7 @@ export default function AdminDashboard() {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Shield className="text-[#5b40e6]" size={32} />
+            <Shield className="text-[#2563eb]" size={32} />
             Admin Dashboard
           </h1>
           <p className="text-gray-500 mt-1">
@@ -466,7 +466,7 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab("overview")}
                 className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-colors ${
                   activeTab === "overview"
-                    ? "bg-[#5b40e6] text-white"
+                    ? "bg-[#2563eb] text-white"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
               >
@@ -476,7 +476,7 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab("users")}
                 className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-colors ${
                   activeTab === "users"
-                    ? "bg-[#5b40e6] text-white"
+                    ? "bg-[#2563eb] text-white"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
               >
@@ -486,7 +486,7 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab("hoardings")}
                 className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-colors ${
                   activeTab === "hoardings"
-                    ? "bg-[#5b40e6] text-white"
+                    ? "bg-[#2563eb] text-white"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
               >
@@ -496,7 +496,7 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab("payments")}
                 className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 ${
                   activeTab === "payments"
-                    ? "bg-[#5b40e6] text-white"
+                    ? "bg-[#2563eb] text-white"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
               >
@@ -529,7 +529,7 @@ export default function AdminDashboard() {
                   <select
                     value={userRoleFilter}
                     onChange={(e) => setUserRoleFilter(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   >
                     <option value="">All Roles</option>
                     <option value="buyer">Buyer</option>
@@ -540,7 +540,7 @@ export default function AdminDashboard() {
                   <select
                     value={userKYCFilter}
                     onChange={(e) => setUserKYCFilter(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   >
                     <option value="">All KYC Status</option>
                     <option value="not_submitted">Not Submitted</option>
@@ -708,7 +708,7 @@ export default function AdminDashboard() {
                   <select
                     value={hoardingStatusFilter}
                     onChange={(e) => setHoardingStatusFilter(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   >
                     <option value="">All Status</option>
                     <option value="pending">Pending</option>
@@ -845,7 +845,7 @@ export default function AdminDashboard() {
                   <select
                     value={bookingStatusFilter}
                     onChange={(e) => setBookingStatusFilter(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5b40e6] outline-none"
+                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2563eb] outline-none"
                   >
                     <option value="">All Status</option>
                     <option value="pending">Pending</option>
@@ -1129,14 +1129,14 @@ export default function AdminDashboard() {
             <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
               {userDetailsModal.loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-[#5b40e6]" />
+                  <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
                 </div>
               ) : userDetailsModal.user ? (
                 <div className="space-y-6">
                   {/* Basic Information */}
                   <div className="bg-gray-50 rounded-xl p-6">
                     <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <Users size={20} className="text-[#5b40e6]" />
+                      <Users size={20} className="text-[#2563eb]" />
                       Basic Information
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1224,7 +1224,7 @@ export default function AdminDashboard() {
                   {userDetailsModal.user.kycDetails && (
                     <div className="bg-gray-50 rounded-xl p-6">
                       <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <Shield size={20} className="text-[#5b40e6]" />
+                        <Shield size={20} className="text-[#2563eb]" />
                         KYC Details
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1304,7 +1304,7 @@ export default function AdminDashboard() {
                                     <img
                                       src={doc}
                                       alt={`KYC Document ${index + 1}`}
-                                      className="w-full h-32 object-cover rounded-lg border-2 border-gray-200 hover:border-[#5b40e6] transition-all"
+                                      className="w-full h-32 object-cover rounded-lg border-2 border-gray-200 hover:border-[#2563eb] transition-all"
                                     />
                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
                                       <Eye size={24} className="text-white" />
