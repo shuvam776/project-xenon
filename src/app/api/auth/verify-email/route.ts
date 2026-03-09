@@ -46,10 +46,12 @@ export async function POST(req: Request) {
     // Delete used OTP
     await OTP.deleteMany({ email, type: 'verification' });
 
-    // Send welcome email (fire and forget - don't block the response)
-    sendWelcomeEmail(user.email, user.name).catch(error => {
-      console.error('Failed to send welcome email:', error);
-    });
+    // Send welcome email only for buyers and vendors (fire and forget - don't block the response)
+    if (user.role === 'buyer' || user.role === 'vendor') {
+      sendWelcomeEmail(user.email, user.name, user.role).catch(error => {
+        console.error('Failed to send welcome email:', error);
+      });
+    }
 
     // Now assign tokens after successful verification
     const accessToken = signAccessToken({ userId: user._id.toString(), role: user.role });

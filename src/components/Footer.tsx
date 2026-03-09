@@ -1,14 +1,7 @@
 import { Fragment } from "react";
 import Link from "next/link";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-} from "lucide-react";
+import Image from "next/image";
+import { Mail, Phone, MapPin, Twitter, Linkedin, Youtube } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -51,28 +44,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Company Info */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded bg-[#2563eb] group-hover:bg-[#1d4ed8] transition-colors">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-6 w-6 text-white"
-                >
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="text-[10px] tracking-widest font-semibold text-gray-400">
-                  THE
-                </span>
-                <span className="text-lg font-bold tracking-wide text-white">
-                  HOARDSPACE
-                </span>
-              </div>
+            <Link href="/" className="inline-block mb-4">
+              <Image
+                src="/companyLogo/Screenshot 2026-03-02 at 02.10.29.png"
+                alt="HoardSpace Logo"
+                width={180}
+                height={50}
+                className="h-12 w-auto object-contain"
+              />
             </Link>
             <p className="text-sm text-gray-400 mb-6 max-w-sm">
               India's leading platform for booking premium outdoor advertising
@@ -82,25 +61,25 @@ export default function Footer() {
             {/* Contact Info */}
             <div className="space-y-3">
               <a
-                href="mailto:support@hoardspace.com"
+                href="mailto:bookings@hoardspace.in"
                 className="flex items-center gap-2 text-sm hover:text-[#2563eb] transition-colors"
               >
                 <Mail size={16} />
-                <span>support@hoardspace.com</span>
+                <span>bookings@hoardspace.in</span>
               </a>
               <a
-                href="tel:+911234567890"
+                href="tel:+917655052057"
                 className="flex items-center gap-2 text-sm hover:text-[#2563eb] transition-colors"
               >
                 <Phone size={16} />
-                <span>+91 123 456 7890</span>
+                <span>7655-052057</span>
               </a>
               <div className="flex items-start gap-2 text-sm">
                 <MapPin size={16} className="mt-0.5 shrink-0" />
                 <span>
-                  123 Business Hub, Andheri East,
+                  TI-103(A), First Floor, TIIR Building (FTBI),
                   <br />
-                  Mumbai, Maharashtra 400069
+                  NIT Rourkela Campus, Odisha - 769008
                 </span>
               </div>
             </div>
@@ -174,16 +153,16 @@ export default function Footer() {
             </div>
             <div className="flex items-center gap-4">
               <a
-                href="https://facebook.com"
+                href="https://www.linkedin.com/company/hoardspace-bookings-private-limited"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
-                aria-label="Facebook"
+                aria-label="LinkedIn"
               >
-                <Facebook size={18} />
+                <Linkedin size={18} />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://x.com/hoardspace1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
@@ -192,24 +171,110 @@ export default function Footer() {
                 <Twitter size={18} />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.youtube.com/@HoardSpace"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
-                aria-label="Instagram"
+                aria-label="YouTube"
               >
-                <Instagram size={18} />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={18} />
+                <Youtube size={18} />
               </a>
             </div>
+          </div>
+        </div>
+
+        {/* Supported By Section */}
+        <div className="border-t border-gray-800 pt-8 mb-8">
+          <div className="text-center mb-6">
+            <h4 className="text-white font-semibold text-sm uppercase tracking-wider">
+              Supported By
+            </h4>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 items-center justify-items-center">
+            <a
+              href="https://msh.meity.gov.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
+            >
+              <Image
+                src="/logos/IMG_2179.PNG"
+                alt="Institution Logo"
+                width={100}
+                height={60}
+                className="object-contain max-h-12 w-auto"
+              />
+            </a>
+            <a
+              href="https://msme.gov.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
+            >
+              <Image
+                src="/logos/IMG_2180.JPG"
+                alt="Institution Logo"
+                width={100}
+                height={60}
+                className="object-contain max-h-12 w-auto"
+              />
+            </a>
+            <a
+              href="https://www.nitrkl.ac.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
+            >
+              <Image
+                src="/logos/IMG_2181.PNG"
+                alt="Institution Logo"
+                width={100}
+                height={60}
+                className="object-contain max-h-12 w-auto"
+              />
+            </a>
+            <a
+              href="https://www.ftbi-nitrkl.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
+            >
+              <Image
+                src="/logos/IMG_2182.PNG"
+                alt="Institution Logo"
+                width={100}
+                height={60}
+                className="object-contain max-h-12 w-auto"
+              />
+            </a>
+            <a
+              href="https://startupodisha.gov.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
+            >
+              <Image
+                src="/logos/IMG_2183.PNG"
+                alt="Institution Logo"
+                width={100}
+                height={60}
+                className="object-contain max-h-12 w-auto"
+              />
+            </a>
+            <a
+              href="https://www.startupindia.gov.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
+            >
+              <Image
+                src="/logos/IMG_2184.JPG"
+                alt="Institution Logo"
+                width={100}
+                height={60}
+                className="object-contain max-h-12 w-auto"
+              />
+            </a>
           </div>
         </div>
 
@@ -238,7 +303,9 @@ export default function Footer() {
             <p className="text-sm text-gray-500">
               &copy; {currentYear} HoardSpace. All rights reserved.
             </p>
-            <p className="text-xs text-gray-600 mt-2">Made with ❤️ in India</p>
+            <p className="text-xs text-gray-600 mt-2">
+              Made with ❤️ by Team Webwiz
+            </p>
           </div>
         </div>
       </div>

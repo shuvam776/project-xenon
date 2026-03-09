@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import {
   Menu,
@@ -72,27 +73,14 @@ export default function Navbar() {
                 </button>
 
                 <Link href="/" className="flex items-center gap-2 group">
-                  <div className="flex h-8 w-8 items-center justify-center rounded bg-white/10 group-hover:bg-white/20 transition-colors">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                    >
-                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                    </svg>
-                  </div>
-                  <div className="flex flex-col leading-none">
-                    <span className="text-[10px] tracking-widest font-semibold text-white/80">
-                      THE
-                    </span>
-                    <span className="text-lg font-bold tracking-wide">
-                      HOARDSPACE
-                    </span>
-                  </div>
+                  <Image
+                    src="/companyLogo/Screenshot 2026-03-02 at 02.10.29.png"
+                    alt="HoardSpace Logo"
+                    width={180}
+                    height={50}
+                    className="h-10 w-auto object-contain"
+                    priority
+                  />
                 </Link>
               </div>
 

@@ -8,21 +8,21 @@ let resendClient: Resend | null = null;
 
 // Initialize Resend client only if API key is provided
 if (resendApiKey) {
-    resendClient = new Resend(resendApiKey);
+  resendClient = new Resend(resendApiKey);
 }
 
 export interface EmailResult {
-    success: boolean;
-    messageId?: string;
-    error?: string;
+  success: boolean;
+  messageId?: string;
+  error?: string;
 }
 
 export interface EmailOptions {
-    to: string;
-    subject: string;
-    html: string;
-    text?: string;
-    from?: string;
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+  from?: string;
 }
 
 /**
@@ -30,57 +30,57 @@ export interface EmailOptions {
  * Falls back to console logging in development if Resend is not configured
  */
 export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
-    try {
-        // If Resend is not configured, log to console (development mode)
-        if (!resendClient) {
-            console.log(`[MOCK EMAIL] From: ${options.from || generalFromEmail}`);
-            console.log(`[MOCK EMAIL] To: ${options.to}`);
-            console.log(`[MOCK EMAIL] Subject: ${options.subject}`);
-            console.log(`[MOCK EMAIL] Body: ${options.text || options.html}`);
+  try {
+    // If Resend is not configured, log to console (development mode)
+    if (!resendClient) {
+      console.log(`[MOCK EMAIL] From: ${options.from || generalFromEmail}`);
+      console.log(`[MOCK EMAIL] To: ${options.to}`);
+      console.log(`[MOCK EMAIL] Subject: ${options.subject}`);
+      console.log(`[MOCK EMAIL] Body: ${options.text || options.html}`);
 
-            if (process.env.NODE_ENV === 'production') {
-                console.error('Resend API key not configured in production!');
-                return { success: false, error: 'Email service not configured' };
-            }
+      if (process.env.NODE_ENV === 'production') {
+        console.error('Resend API key not configured in production!');
+        return { success: false, error: 'Email service not configured' };
+      }
 
-            return { success: true, messageId: 'mock-email-id' };
-        }
-
-        // Send real email via Resend
-        const { data, error } = await resendClient.emails.send({
-            from: options.from || generalFromEmail,
-            to: options.to,
-            subject: options.subject,
-            html: options.html,
-            text: options.text,
-        });
-
-        if (error) {
-            console.error('Failed to send email:', error);
-            return { success: false, error: error.message };
-        }
-
-        console.log(`Email sent successfully to ${options.to}, ID: ${data?.id}`);
-
-        return {
-            success: true,
-            messageId: data?.id
-        };
-
-    } catch (error: any) {
-        console.error('Failed to send email:', error);
-        return {
-            success: false,
-            error: error.message || 'Failed to send email'
-        };
+      return { success: true, messageId: 'mock-email-id' };
     }
+
+    // Send real email via Resend
+    const { data, error } = await resendClient.emails.send({
+      from: options.from || generalFromEmail,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      text: options.text,
+    });
+
+    if (error) {
+      console.error('Failed to send email:', error);
+      return { success: false, error: error.message };
+    }
+
+    console.log(`Email sent successfully to ${options.to}, ID: ${data?.id}`);
+
+    return {
+      success: true,
+      messageId: data?.id
+    };
+
+  } catch (error: any) {
+    console.error('Failed to send email:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to send email'
+    };
+  }
 }
 
 /**
  * Send OTP verification email
  */
 export async function sendOTPEmail(email: string, otp: string): Promise<EmailResult> {
-    const html = `
+  const html = `
     <!DOCTYPE html>
     <html>
       <head>
@@ -123,7 +123,7 @@ export async function sendOTPEmail(email: string, otp: string): Promise<EmailRes
     </html>
   `;
 
-    const text = `
+  const text = `
 Your HoardSpace verification code is: ${otp}
 
 This code is valid for 15 minutes. Never share this code with anyone.
@@ -133,20 +133,45 @@ If you didn't request this code, please ignore this email.
 © ${new Date().getFullYear()} HoardSpace. All rights reserved.
   `;
 
-    return sendEmail({
-        to: email,
-        subject: 'Verify Your Email - HoardSpace',
-        html,
-        text,
-        from: authFromEmail,
-    });
+  return sendEmail({
+    to: email,
+    subject: 'Verify Your Email - HoardSpace',
+    html,
+    text,
+    from: authFromEmail,
+  });
 }
 
 /**
  * Send welcome email after successful verification
  */
-export async function sendWelcomeEmail(email: string, name: string): Promise<EmailResult> {
-    const html = `
+export async function sendWelcomeEmail(email: string, name: string, role: 'buyer' | 'vendor'): Promise<EmailResult> {
+  const isBuyer = role === 'buyer';
+
+  const getStartedContent = isBuyer ? `
+            <h3 style="color: #2563eb; margin-top: 0;">Get Started as an Advertiser:</h3>
+            <ul style="color: #555; padding-left: 20px;">
+              <li>Browse thousands of premium hoarding locations across India</li>
+              <li>Compare prices and availability in real-time</li>
+              <li>Book advertising spaces with verified vendors</li>
+              <li>Manage multiple campaigns from one dashboard</li>
+              <li>Track bookings and payments seamlessly</li>
+            </ul>
+    ` : `
+            <h3 style="color: #2563eb; margin-top: 0;">Get Started as a Vendor:</h3>
+            <ul style="color: #555; padding-left: 20px;">
+              <li>List your hoarding locations and reach advertisers nationwide</li>
+              <li>Set your pricing and manage availability in real-time</li>
+              <li>Receive booking requests directly from brands and agencies</li>
+              <li>Track your inventory performance with detailed analytics</li>
+              <li>Grow your business with our transparent platform</li>
+            </ul>
+    `;
+
+  const ctaText = isBuyer ? 'Browse Hoardings' : 'List Your Hoardings';
+  const ctaUrl = isBuyer ? 'https://hoardspace.in/search' : 'https://hoardspace.in/vendor/add-hoarding';
+
+  const html = `
     <!DOCTYPE html>
     <html>
       <head>
@@ -165,20 +190,14 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<Ema
           <p style="font-size: 16px; color: #555;">Your email has been successfully verified. Welcome to HoardSpace - India's leading outdoor advertising platform!</p>
           
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <h3 style="color: #2563eb; margin-top: 0;">Get Started:</h3>
-            <ul style="color: #555; padding-left: 20px;">
-              <li>Browse thousands of premium hoarding locations</li>
-              <li>List your advertising spaces and reach more clients</li>
-              <li>Manage bookings and payments seamlessly</li>
-              <li>Track your campaigns in real-time</li>
-            </ul>
+            ${getStartedContent}
           </div>
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://hoardspace.in/profile" style="display: inline-block; background: #2563eb; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">Complete Your Profile</a>
+            <a href="${ctaUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">${ctaText}</a>
           </div>
           
-          <p style="font-size: 14px; color: #777; margin-top: 30px;">Need help? Our support team is here for you at <a href="mailto:support@hoardspace.com" style="color: #2563eb;">support@hoardspace.com</a></p>
+          <p style="font-size: 14px; color: #777; margin-top: 30px;">Need help? Our support team is here for you at <a href="mailto:bookings@hoardspace.in" style="color: #2563eb;">bookings@hoardspace.in</a></p>
         </div>
         
         <div style="text-align: center; padding: 20px;">
@@ -190,10 +209,10 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<Ema
     </html>
   `;
 
-    return sendEmail({
-        to: email,
-        subject: 'Welcome to HoardSpace! 🎉',
-        html,
-        from: generalFromEmail,
-    });
+  return sendEmail({
+    to: email,
+    subject: 'Welcome to HoardSpace! 🎉',
+    html,
+    from: generalFromEmail,
+  });
 }

@@ -41,6 +41,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const signupForm = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
@@ -420,10 +421,44 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   )}
                 </div>
 
+                {authMode === "signup" && (
+                  <div className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-gray-300 text-[#2563eb] focus:ring-[#2563eb]"
+                    />
+                    <label htmlFor="terms" className="text-sm text-gray-600">
+                      I agree to the{" "}
+                      <a
+                        href="/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#2563eb] hover:underline"
+                      >
+                        Terms & Conditions
+                      </a>{" "}
+                      and{" "}
+                      <a
+                        href="/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#2563eb] hover:underline"
+                      >
+                        Privacy Policy
+                      </a>
+                    </label>
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#2563eb] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  disabled={
+                    loading || (authMode === "signup" && !termsAccepted)
+                  }
+                  className="w-full bg-[#2563eb] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
                     ? "Processing..."
@@ -472,9 +507,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <div className="text-center mt-2">
                   <button
                     type="button"
-                    onClick={() =>
-                      setAuthMode(authMode === "signup" ? "login" : "signup")
-                    }
+                    onClick={() => {
+                      setAuthMode(authMode === "signup" ? "login" : "signup");
+                      setTermsAccepted(false);
+                    }}
                     className="text-[#2563eb] text-sm hover:underline"
                   >
                     {authMode === "signup"
