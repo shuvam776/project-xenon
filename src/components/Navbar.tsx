@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
-  Search,
   Menu,
   ShoppingBag,
   User,
@@ -22,7 +21,6 @@ import { checkAuth, logout } from "@/lib/fetchWithAuth";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -43,14 +41,14 @@ export default function Navbar() {
   };
 
   const topCities = [
-    "Mumbai",
-    "Delhi NCR",
-    "Bengaluru",
-    "Hyderabad",
-    "Chennai",
-    "Kolkata",
-    "Pune",
-    "Ahmedabad",
+    { name: "Mumbai", value: "Mumbai" },
+    { name: "Delhi NCR", value: "Delhi" },
+    { name: "Bengaluru", value: "Bangalore" },
+    { name: "Hyderabad", value: "Hyderabad" },
+    { name: "Chennai", value: "Chennai" },
+    { name: "Kolkata", value: "Kolkata" },
+    { name: "Pune", value: "Pune" },
+    { name: "Ahmedabad", value: "Ahmedabad" },
   ];
 
   return (
@@ -99,21 +97,8 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              {/* Center: Search Bar */}
-              <div className="hidden md:flex flex-1 items-center justify-center max-w-3xl px-8">
-                <div className="relative w-full">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                    <Search className="h-5 w-5 text-indigo-500" />
-                  </div>
-                  <input
-                    type="text"
-                    className="block w-full rounded-full border-0 bg-white py-3 pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-white/50 sm:text-sm sm:leading-6 shadow-lg"
-                    placeholder='Search "Dainik Bhaskar" "Spotify"...'
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
+              {/* Center: Empty space for better balance */}
+              <div className="flex-1"></div>
 
               {/* Right: Actions */}
               <div className="flex items-center gap-2 sm:gap-6">
@@ -162,22 +147,6 @@ export default function Navbar() {
                 </Link>
               </div>
             </div>
-
-            {/* Mobile Search Bar */}
-            <div className="pb-4 md:hidden">
-              <div className="relative w-full">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                  <Search className="h-4 w-4 text-indigo-500" />
-                </div>
-                <input
-                  type="text"
-                  className="block w-full rounded-full border-0 bg-white py-2.5 pl-10 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-white/50 text-sm shadow-md"
-                  placeholder="Search hoardings..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
           </div>
         </nav>
 
@@ -187,15 +156,15 @@ export default function Navbar() {
             <div className="flex items-center justify-center gap-8 h-12 text-sm font-medium overflow-x-auto no-scrollbar">
               {topCities.map((city) => (
                 <Link
-                  key={city}
-                  href={`/?city=${city}`}
-                  className="hover:text-white transition-colors flex items-center gap-2 group"
+                  key={city.value}
+                  href={`/search?city=${city.value}`}
+                  className="hover:text-white transition-colors flex items-center gap-2 group whitespace-nowrap"
                 >
                   <MapPin
                     size={14}
                     className="text-[#5b40e6] group-hover:scale-110 transition-transform"
                   />
-                  {city}
+                  {city.name}
                 </Link>
               ))}
             </div>
@@ -286,6 +255,22 @@ export default function Navbar() {
                         <LayoutDashboard size={20} />
                       </div>
                       <span className="font-medium">My Dashboard</span>
+                    </Link>
+                  )}
+
+                  {user.role === "admin" && (
+                    <Link
+                      href="/admin/dashboard"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group border-2 border-yellow-400/30"
+                    >
+                      <div className="p-2 bg-yellow-400/20 rounded-lg group-hover:bg-yellow-400/30 transition-colors">
+                        <LayoutDashboard
+                          size={20}
+                          className="text-yellow-300"
+                        />
+                      </div>
+                      <span className="font-medium">Admin Dashboard</span>
                     </Link>
                   )}
                 </>

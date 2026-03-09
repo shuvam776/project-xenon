@@ -10,6 +10,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const city = searchParams.get('city');
+    const type = searchParams.get('type');
     const view = searchParams.get('view'); // 'vendor' (my listings) or default (public)
 
     await dbConnect();
@@ -63,6 +64,10 @@ export async function GET(req: Request) {
 
     if (city) {
       query['location.city'] = { $regex: new RegExp(city, 'i') };
+    }
+
+    if (type) {
+      query.type = type;
     }
 
     const hoardings = await Hoarding.find(query).sort({ createdAt: -1 }).populate('owner', 'name email image');

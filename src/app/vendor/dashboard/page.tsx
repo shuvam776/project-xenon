@@ -10,6 +10,9 @@ import {
   IndianRupee,
   Image as ImageIcon,
   Loader2,
+  Edit,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 
 interface Hoarding {
@@ -33,6 +36,12 @@ export default function VendorDashboard() {
     text: string;
   } | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    hoardingId: string | null;
+    hoardingName: string;
+  }>({ isOpen: false, hoardingId: null, hoardingName: "" });
+  const [deleting, setDeleting] = useState(false);
 
   // Check authentication on mount
   useEffect(() => {
@@ -99,6 +108,43 @@ export default function VendorDashboard() {
 
     fetchHoardings();
   }, [router, authChecked]);
+
+  const handleDeleteClick = (id: string, name: string) => {
+    setDeleteModal({ isOpen: true, hoardingId: id, hoardingName: name });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteModal.hoardingId) return;
+
+    setDeleting(true);
+    try {
+      const res = await fetchWithAuth(
+        `/api/hoardings/${deleteModal.hoardingId}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (res.ok) {
+        // Remove from list
+        setHoardings((prev) =>
+          prev.filter((h) => h._id !== deleteModal.hoardingId),
+        );
+        setDeleteModal({ isOpen: false, hoardingId: null, hoardingName: "" });
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to delete hoarding");
+      }
+    } catch (error) {
+      alert("Failed to delete hoarding");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModal({ isOpen: false, hoardingId: null, hoardingName: "" });
+  };
 
   if (loading) {
     return (
@@ -196,7 +242,7 @@ export default function VendorDashboard() {
                   key={item._id}
                   className="p-6 flex flex-col sm:flex-row gap-6 hover:bg-gray-50 transition-colors group"
                 >
-                  <div className="w-full sm:w-48 h-32 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                  <div className="w-full sm:w-48 h-32 bg-gray-200 rounded-lg overflow-hidden shrink-0">
                     {item.images[0] ? (
                       <img
                         src={item.images[0]}
@@ -233,7 +279,7 @@ export default function VendorDashboard() {
                       </span>
                     </div>
 
-                    <div className="mt-4 flex items-center gap-6">
+                    <div className="mt-4 flex items-center justify-between">
                       <div>
                         <span className="text-xs text-gray-400 uppercase font-bold">
                           Price
@@ -243,6 +289,22 @@ export default function VendorDashboard() {
                           {item.pricePerMonth.toLocaleString()} / mo
                         </div>
                       </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Link
+                          href={`/vendor/edit-hoarding/${item._id}`}
+                          className="flex items-center gap-1 px-4 py-2 bg-indigo-50 text-[#5b40e6] rounded-lg hover:bg-indigo-100 transition-colors font-medium text-sm"
+                        >
+                          <Edit size={16} /> Edit
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteClick(item._id, item.name)}
+                          className="flex items-center gap-1 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium text-sm"
+                        >
+                          <Trash2 size={16} /> Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -251,6 +313,62 @@ export default function VendorDashboard() {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-red-100 rounded-full">
+                <AlertTriangle className="text-red-600" size={24} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">
+                  Delete Hoarding
+                </h3>
+                <p className="text-sm text-gray-500">
+                  This action cannot be undone
+                </p>
+              </div>
+            </div>
+
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">
+                "{deleteModal.hoardingName}"
+              </span>
+              ? All associated data will be permanently removed.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleDeleteCancel}
+                disabled={deleting}
+                className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={deleting}
+                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {deleting ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={18} />
+                    Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

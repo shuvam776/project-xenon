@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
@@ -17,6 +18,8 @@ import {
   LogOut,
   CheckCircle,
   Clock,
+  Shield,
+  ArrowRight,
 } from "lucide-react";
 import { kycSchema, type KYCInput } from "@/lib/validators/user";
 
@@ -168,12 +171,24 @@ export default function ProfilePage() {
         {/* Header / Profile Card */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
           <div className="bg-gradient-to-r from-[#5b40e6] to-[#4834b8] h-32 relative">
-            <button
-              onClick={handleLogout}
-              className="absolute top-4 right-4 flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors backdrop-blur-sm text-sm font-medium"
-            >
-              <LogOut size={16} /> Logout
-            </button>
+            <div className="absolute top-4 right-4 flex gap-3">
+              {user.role === "admin" && (
+                <Link
+                  href="/admin/dashboard"
+                  className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-colors font-semibold shadow-lg"
+                >
+                  <Shield size={16} />
+                  Admin Dashboard
+                  <ArrowRight size={16} />
+                </Link>
+              )}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors backdrop-blur-sm text-sm font-medium"
+              >
+                <LogOut size={16} /> Logout
+              </button>
+            </div>
           </div>
           <div className="px-8 pb-8">
             <div className="relative flex justify-between items-end -mt-12 mb-6">

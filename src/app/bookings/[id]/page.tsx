@@ -91,11 +91,6 @@ export default function BookingPage() {
   useEffect(() => {
     const fetchHoarding = async () => {
       try {
-        // Reuse public api or create a specific one. Public feed is ok if we filter client side,
-        // but better to have /api/hoardings/[id]
-        // For MVP, since we don't have single ID endpoint yet, we fetch all and find (not ideal for handling large data but works for prototype)
-        // OR better: create api/hoardings/[id] now.
-        // I will assume fetching from a details endpoint I will create next.
         const res = await fetch(`/api/hoardings/${id}`);
         if (!res.ok) throw new Error("Failed to load details");
         const data = await res.json();
@@ -157,25 +152,7 @@ export default function BookingPage() {
     setError("");
 
     try {
-      // Calculate Amount (Simple: Pro-rated or just Monthly * Months)
-      // For simplicity MVP: fixed calculation logic here or backend?
-      // Let's assume pricePerMonth is strictly for 30 days.
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      // Basic pro-rata formula
-      const amount = Math.ceil((hoarding.pricePerMonth / 30) * diffDays);
-
-      const minAmount = hoarding.minimumBookingAmount || 0;
-      if (amount < minAmount) {
-        setError(`Minimum booking amount is ₹${minAmount}`);
-        setProcessing(false);
-        return;
-      }
-
-      // 1. Create Order
+      // 1. Create Order (amount calculated securely on backend)
       const res = await fetchWithAuth("/api/bookings/checkout", {
         method: "POST",
         headers: {
@@ -185,12 +162,13 @@ export default function BookingPage() {
           hoardingId: id,
           startDate,
           endDate,
-          amount,
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) {
+        throw new Error(data.error);
+      }
 
       // 2. Open Razorpay
       const options = {
@@ -202,22 +180,35 @@ export default function BookingPage() {
         order_id: data.orderId,
         handler: async function (response: any) {
           // 3. Verify Payment
-          const verifyRes = await fetch("/api/bookings/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            }),
-          });
+          try {
+            const verifyRes = await fetch("/api/bookings/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
 
-          const verifyData = await verifyRes.json();
-          if (verifyData.success) {
-            router.push("/bookings/success");
-          } else {
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              router.push("/bookings/success");
+            } else {
+              setError("Payment verification failed");
+              setProcessing(false);
+            }
+          } catch (error) {
             setError("Payment verification failed");
+            setProcessing(false);
           }
+        },
+        modal: {
+          ondismiss: function () {
+            // User closed the payment modal
+            setProcessing(false);
+            setError("Payment cancelled");
+          },
         },
         prefill: {
           name: user?.name || "Customer",
@@ -233,7 +224,6 @@ export default function BookingPage() {
       paymentObject.open();
     } catch (err: any) {
       setError(err.message || "Payment failed");
-    } finally {
       setProcessing(false);
     }
   };

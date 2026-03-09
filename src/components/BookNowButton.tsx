@@ -50,7 +50,7 @@ export default function BookNowButton({
       // Step 4: Check KYC status
       if (user.kycStatus === "not_submitted") {
         setError("Please complete KYC verification from your profile");
-        setTimeout(() => router.push("/profile"), 2000);
+        setTimeout(() => router.push("/profile"), 1000);
         setChecking(false);
         return;
       }
@@ -64,7 +64,7 @@ export default function BookNowButton({
 
       if (user.kycStatus === "rejected") {
         setError("Your KYC was rejected. Please update from your profile");
-        setTimeout(() => router.push("/profile"), 2000);
+        setTimeout(() => router.push("/profile"), 1000);
         setChecking(false);
         return;
       }

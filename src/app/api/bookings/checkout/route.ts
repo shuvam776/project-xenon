@@ -19,9 +19,45 @@ export async function POST(req: Request) {
     if (!payload) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
     const body = await req.json();
-    const { hoardingId, startDate, endDate, amount } = body;
+    const { hoardingId, startDate, endDate } = body;
+
+    if (!hoardingId || !startDate || !endDate) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
 
     await dbConnect();
+
+    // Fetch hoarding to get actual price
+    const hoarding = await Hoarding.findById(hoardingId);
+    if (!hoarding) {
+      return NextResponse.json({ error: "Hoarding not found" }, { status: 404 });
+    }
+
+    if (hoarding.status !== 'approved') {
+      return NextResponse.json({ error: "Hoarding is not available for booking" }, { status: 400 });
+    }
+
+    // Calculate amount on server side (SECURE)
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 1) {
+      return NextResponse.json({ error: "Invalid date range" }, { status: 400 });
+    }
+
+    // Calculate amount based on actual hoarding price from database
+    const amount = Math.ceil((hoarding.pricePerMonth / 30) * diffDays);
+
+    // Validate minimum booking amount
+    const minAmount = hoarding.minimumBookingAmount || 0;
+    if (amount < minAmount) {
+      return NextResponse.json(
+        { error: `Minimum booking amount is ₹${minAmount}` },
+        { status: 400 }
+      );
+    }
 
     // Create Razorpay Order
     const options = {
