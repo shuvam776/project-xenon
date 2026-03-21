@@ -1,53 +1,47 @@
-import dbConnect from "@/lib/dbConnect";
-import Hoarding from "@/models/Hoarding";
-import HoardingsClient from "@/components/HoardingsClient";
+import Image from "next/image";
 import SearchBar from "@/components/SearchBar";
+import AboutSection from "@/app/about/page";
+import "@fontsource/chiron-goround-tc";
 
-// Force dynamic rendering to ensure we get latest data
-export const dynamic = "force-dynamic";
-
-async function getHoardings() {
-  await dbConnect();
-  // In a real scenario, we might want to filter by status='approved'
-  const hoardings = await Hoarding.find({ status: "approved" }).sort({
-    createdAt: -1,
-  });
-  return JSON.parse(JSON.stringify(hoardings));
-}
-
-export default async function Home() {
-  const hoardings = await getHoardings();
+export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section with Search */}
-      <div className="bg-gradient-to-br from-[#2563eb] via-blue-600 to-blue-600 text-white min-h-screen py-16 px-4 relative overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-        </div>
+      {/* Modern Left-Aligned Hero Section */}
+      <section id="home" className="relative w-full min-h-[65vh] flex flex-col justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-orange-50 overflow-hidden">
+        {/* Subtle Decorative Gradients */}
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-blue-100/60 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
+        <div className="absolute bottom-0 right-1/4 translate-y-1/4 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
 
-        <div className="max-w-6xl mx-auto text-center space-y-8 relative z-10">
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-            Find the Perfect Hoarding Space
-          </h1>
-          <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-8">
-            Discover and book premium outdoor advertising locations across top
-            cities in India.
-          </p>
+        {/* Artistic Blended Billboard Imagery */}
+        
+        
 
-          {/* Search Bar */}
-          <div className="max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto w-full pt-4 pb-16 relative z-20 flex flex-col items-center justify-center">
+          {/* Search Bar Positioned Above Text */}
+          <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 pointer-events-auto">
             <SearchBar />
           </div>
-        </div>
-      </div>
 
-      {/* All Hoardings Display */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-12">
-        <HoardingsClient hoardings={hoardings} />
-      </div>
+          <div className="max-w-4xl space-y-6 text-center flex flex-col items-center">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl text-slate-900 tracking-tight leading-[1.05] antialiased">
+              <span className="font-sans font-black block">Find the</span>
+              <span className="font-serif italic bg-[linear-gradient(110deg,#2563eb,45%,#dbeafe,55%,#2563eb)] bg-[length:200%_auto] text-transparent bg-clip-text animate-shine pe-3 drop-shadow-sm">Perfect</span>
+              <span className="font-sans font-black text-slate-900 block mt-2">Hoarding Space</span>
+            </h1>
+            <p
+              className="text-xl md:text-3xl lg:text-[2rem] font-black text-slate-900 mx-auto max-w-3xl leading-tight antialiased drop-shadow-sm"
+              style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}
+            >
+              Discover and book <span className="font-serif italic font-extrabold tracking-tight bg-[linear-gradient(110deg,#9333ea,45%,#f0abfc,55%,#9333ea)] bg-[length:200%_auto] text-transparent bg-clip-text animate-[shine_4s_linear_infinite_reverse] drop-shadow-md">premium</span> outdoor advertising locations across <span className="font-sans font-black text-orange-500 tracking-wider">top cities</span> in India.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="about">
+        <AboutSection />
+      </section>
     </div>
   );
 }

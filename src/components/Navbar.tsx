@@ -3,25 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import {
-  Menu,
-  User,
-  X,
-  MapPin,
-  Home,
-  UserCircle,
-  Info,
-  Mail,
-  LogOut,
-  LayoutDashboard,
-} from "lucide-react";
+import { User, Menu, X } from "lucide-react";
 import AuthModal from "./AuthModal";
 import { checkAuth, logout } from "@/lib/fetchWithAuth";
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     // Check for authentication via cookie (with auto-refresh)
@@ -40,270 +29,167 @@ export default function Navbar() {
     window.location.reload();
   };
 
-  const topCities = [
-    { name: "Mumbai", value: "Mumbai" },
-    { name: "Delhi NCR", value: "Delhi" },
-    { name: "Bengaluru", value: "Bangalore" },
-    { name: "Hyderabad", value: "Hyderabad" },
-    { name: "Chennai", value: "Chennai" },
-    { name: "Kolkata", value: "Kolkata" },
-    { name: "Pune", value: "Pune" },
-    { name: "Ahmedabad", value: "Ahmedabad" },
-  ];
-
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 w-full z-50">
-        <nav className="bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] text-white shadow-sm transition-all duration-300">
+      <div className="relative w-full z-50">
+        <nav className="bg-blue-100 text-slate-800 shadow-md border-b-4 border-orange-500 transition-all duration-300">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-between gap-4 md:h-20">
-              {/* Left: Mobile Menu & Logo */}
-              <div className="flex items-center gap-4">
-                <button
-                  className="lg:hidden p-2 hover:bg-white/10 rounded-md transition-colors"
-                  onClick={() => setIsMenuOpen(true)}
-                >
-                  <Menu size={24} />
-                </button>
-                <button
-                  className="hidden lg:block p-2 hover:bg-white/10 rounded-md transition-colors"
-                  onClick={() => setIsMenuOpen(true)}
-                >
-                  <Menu size={24} />
-                </button>
-
-                <Link href="/" className="flex items-center gap-2 group">
+            <div className="flex h-16 items-center justify-between gap-4 md:h-20 relative">
+              
+              {/* Left: Logo */}
+              <div className="flex items-center shrink-0 h-full">
+                <Link href="/" className="flex items-center gap-2 group h-full">
                   <Image
                     src="/companyLogo/Screenshot 2026-03-02 at 02.10.29.png"
                     alt="HoardSpace Logo"
                     width={180}
                     height={50}
-                    className="h-10 w-auto object-contain"
+                    className="h-10 w-auto object-contain mix-blend-multiply flex-shrink-0"
                     priority
                   />
                 </Link>
               </div>
 
-              {/* Center: Empty space for better balance */}
-              <div className="flex-1"></div>
+              {/* Center: Global Navigation Links */}
+              <div className="hidden min-[731px]:flex flex-1 justify-center items-center gap-8 font-sans h-full">
+                <Link href="/#home" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
+                  Home
+                </Link>
+                <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
+                  Explore
+                </Link>
+                <Link href="/#about" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
+                  About Us
+                </Link>
+                <Link href="/contact" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
+                  Contact Us
+                </Link>
+              </div>
 
-              {/* Right: Actions */}
-              <div className="flex items-center gap-2 sm:gap-6">
-                <Link
-                  href="/contact"
-                  className="hidden lg:block text-sm font-medium hover:text-white/80 transition-colors"
+              {/* Right: CTA Actions & Mobile Toggle */}
+              <div className="flex items-center justify-end shrink-0 gap-2 h-full">
+                {/* Desktop Auth Buttons (Only visible > 730px) */}
+                <div className="hidden min-[731px]:flex items-center gap-2 h-full">
+                  {user ? (
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-2 rounded-lg py-2 px-2 hover:bg-blue-100 transition-colors"
+                      >
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-200 text-blue-700">
+                          <User size={18} />
+                        </div>
+                        <span className="hidden sm:inline text-xs uppercase tracking-widest font-black">
+                          Profile
+                        </span>
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors px-2"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setIsAuthOpen(true)}
+                      className="flex items-center gap-2 rounded-lg py-2 px-3 hover:bg-blue-100 transition-colors"
+                    >
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-200 text-blue-700">
+                        <User size={18} />
+                      </div>
+                      <span className="hidden sm:inline text-xs uppercase tracking-widest font-black">
+                        REGISTER
+                      </span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Mobile Hamburger Button (Only visible <= 730px) */}
+                <button 
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="min-[731px]:hidden p-2 text-slate-700 hover:text-orange-600 transition-colors"
+                >
+                  {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Overlay Menu */}
+          {isMenuOpen && (
+            <div className="min-[731px]:hidden bg-blue-50 border-t border-blue-200 shadow-2xl animate-in slide-in-from-top duration-300">
+              <div className="flex flex-col p-4 gap-2">
+                <Link 
+                  href="/#home" 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                >
+                  Home
+                </Link>
+                <Link 
+                  href="/explore" 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                >
+                  Explore
+                </Link>
+                <Link 
+                  href="/#about" 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                >
+                  About Us
+                </Link>
+                <Link 
+                  href="/contact" 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
                 >
                   Contact Us
                 </Link>
 
-                {user ? (
-                  <Link
-                    href="/profile"
-                    className="flex items-center gap-2 rounded-lg py-2 px-3 hover:bg-white/10 transition-colors"
-                  >
-                    <User size={18} />
-                    <span className="hidden sm:inline text-sm font-medium">
-                      Profile
-                    </span>
-                  </Link>
-                ) : (
-                  <button
-                    onClick={() => setIsAuthOpen(true)}
-                    className="flex items-center gap-2 rounded-lg py-2 px-3 hover:bg-white/10 transition-colors"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+                {/* Mobile Auth Actions (Register/Profile/Logout) */}
+                <div className="mt-4 pt-4 border-t border-blue-100 space-y-2">
+                  {user ? (
+                    <>
+                      <Link
+                        href="/profile"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                      >
+                        <User size={18} className="text-blue-500" />
+                        Profile
+                      </Link>
+                      <button 
+                        onClick={() => {
+                          handleLogout();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                      >
+                         <X size={18} />
+                         Logout
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsAuthOpen(true);
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-[#2563eb] hover:bg-blue-100 rounded-lg transition-all"
+                    >
                       <User size={18} />
-                    </div>
-                    <span className="hidden sm:inline text-sm font-medium">
-                      Login
-                    </span>
-                  </button>
-                )}
+                      Register / Login
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </nav>
-
-        {/* Secondary Strip - Top Cities */}
-        <div className="bg-[#1a1a1a] text-white/90 shadow-md border-b border-white/10 hidden md:block">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-center gap-8 h-12 text-sm font-medium overflow-x-auto no-scrollbar">
-              {topCities.map((city) => (
-                <Link
-                  key={city.value}
-                  href={`/search?city=${city.value}`}
-                  className="hover:text-white transition-colors flex items-center gap-2 group whitespace-nowrap"
-                >
-                  <MapPin
-                    size={14}
-                    className="text-[#2563eb] group-hover:scale-110 transition-transform"
-                  />
-                  {city.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
-
-      {/* Mobile/Desktop Sidebar Menu */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-50">
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
-            onClick={() => setIsMenuOpen(false)}
-          />
-
-          {/* Sidebar */}
-          <div className="fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-[#2563eb] to-[#1d4ed8] shadow-2xl transition-transform">
-            {/* Header with Welcome */}
-            <div className="relative bg-white/10 backdrop-blur-md p-6 border-b border-white/20">
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
-              >
-                <X size={20} />
-              </button>
-
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center">
-                  <User size={24} className="text-white" />
-                </div>
-                <div>
-                  <h3 className="text-white font-bold text-lg">
-                    {user ? `Hello, ${user.name}` : "Hello & Welcome"}
-                  </h3>
-                  <p className="text-white/70 text-xs">
-                    {user ? user.email : "Sign in to continue"}
-                  </p>
-                </div>
-              </div>
-
-              {!user && (
-                <button
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    setIsAuthOpen(true);
-                  }}
-                  className="w-full bg-white text-[#2563eb] py-2 px-4 rounded-lg font-semibold hover:bg-white/90 transition-colors shadow-lg"
-                >
-                  Login / Register
-                </button>
-              )}
-            </div>
-
-            {/* Navigation Menu */}
-            <nav className="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-200px)]">
-              <Link
-                href="/"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group"
-              >
-                <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                  <Home size={20} />
-                </div>
-                <span className="font-medium">Home</span>
-              </Link>
-
-              {user && (
-                <>
-                  <Link
-                    href="/profile"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group"
-                  >
-                    <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                      <UserCircle size={20} />
-                    </div>
-                    <span className="font-medium">My Profile</span>
-                  </Link>
-
-                  {user.role === "buyer" && (
-                    <Link
-                      href="/buyer/dashboard"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group"
-                    >
-                      <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                        <LayoutDashboard size={20} />
-                      </div>
-                      <span className="font-medium">My Dashboard</span>
-                    </Link>
-                  )}
-
-                  {user.role === "vendor" && (
-                    <Link
-                      href="/vendor/dashboard"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group"
-                    >
-                      <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                        <LayoutDashboard size={20} />
-                      </div>
-                      <span className="font-medium">My Dashboard</span>
-                    </Link>
-                  )}
-
-                  {user.role === "admin" && (
-                    <Link
-                      href="/admin/dashboard"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group border-2 border-yellow-400/30"
-                    >
-                      <div className="p-2 bg-yellow-400/20 rounded-lg group-hover:bg-yellow-400/30 transition-colors">
-                        <LayoutDashboard
-                          size={20}
-                          className="text-yellow-300"
-                        />
-                      </div>
-                      <span className="font-medium">Admin Dashboard</span>
-                    </Link>
-                  )}
-                </>
-              )}
-
-              <Link
-                href="/about"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group"
-              >
-                <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                  <Info size={20} />
-                </div>
-                <span className="font-medium">About Us</span>
-              </Link>
-
-              <Link
-                href="/contact"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-white transition-all group"
-              >
-                <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                  <Mail size={20} />
-                </div>
-                <span className="font-medium">Contact Us</span>
-              </Link>
-            </nav>
-
-            {/* Logout Button (if logged in) */}
-            {user && (
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-md border-t border-white/20">
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 text-white py-3 px-4 rounded-xl font-medium transition-colors"
-                >
-                  <LogOut size={20} />
-                  <span>Logout</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </>

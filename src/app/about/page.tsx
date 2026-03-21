@@ -5,355 +5,90 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            About <span className="text-[#2563eb]">HoardSpace</span>
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Search, Book and Manage thousands of hoardings all across India.
-          </p>
-        </div>
-
-        {/* About Us */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-blue-50 rounded-xl">
-              <Target className="w-8 h-8 text-[#2563eb]" />
+        {/* Modern About & Features Split Layout */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
+          {/* Left Column: Heading & Content */}
+          <div className="space-y-12 pr-0 lg:pr-8">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                About <span className="text-[#2563eb]">HoardSpace</span>
+              </h1>
+              <p className="text-lg text-slate-500 leading-relaxed font-semibold">
+                Hoardspace is a digital marketplace transforming the way outdoor
+                advertising is discovered, planned, and booked. Search, compare, and
+                book premium locations across Indian cities through a
+                transparent, technology-driven platform.
+              </p>
+              
+              <div className="mt-12 flex flex-wrap gap-10">
+                  <div className="flex flex-col">
+                      <span className="text-4xl font-black text-slate-900">10k+</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-[#2563eb] mt-2">Premium Boards</span>
+                  </div>
+                  <div className="flex flex-col">
+                      <span className="text-4xl font-black text-slate-900">24/7</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-[#2563eb] mt-2">Support Team</span>
+                  </div>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">About Us</h2>
-          </div>
-          <div className="space-y-4 text-gray-600 leading-relaxed">
-            <p>
-              Hoardspace is a digital marketplace transforming the way outdoor
-              advertising is discovered, planned, and booked. Our platform
-              enables brands, advertisers, and agencies to search, compare, and
-              book premium hoarding locations across cities through a
-              transparent and technology-driven system. By bringing outdoor
-              advertising online, Hoardspace simplifies campaign planning and
-              makes it easier for advertisers to access high-visibility
-              advertising spaces.
-            </p>
-            <p>
-              The platform also empowers hoarding vendors and media owners to
-              list their inventory, manage bookings, and connect directly with
-              advertisers and agencies. By streamlining discovery, availability,
-              and campaign management, Hoardspace aims to bring efficiency and
-              transparency to the outdoor advertising ecosystem.
-            </p>
-            <p>
-              Hoardspace is led by a team of passionate innovators from leading
-              institutions including IIT and NIT, working to modernize the
-              traditional billboard advertising industry through technology. Our
-              vision is to build a scalable digital infrastructure for outdoor
-              advertising that makes launching and managing campaigns faster,
-              smarter, and more accessible across India.
-            </p>
-          </div>
-        </div>
-
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <div className="p-3 bg-green-50 rounded-xl w-fit mb-4">
-              <Building2 className="w-6 h-6 text-green-600" />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
-              Premium Locations
-            </h3>
-            <p className="text-gray-600">
-              Access to thousands of prime hoarding locations in major cities
-              across India.
-            </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <div className="p-3 bg-blue-50 rounded-xl w-fit mb-4">
-              <Users className="w-6 h-6 text-blue-600" />
+          {/* Right Column: Billboard Image & Floating Attached Features */}
+          <div className="relative h-full w-full min-h-[600px] flex items-center justify-center mt-12 lg:mt-0">
+            {/* Image Container */}
+            <div className="relative w-full max-w-sm lg:max-w-md aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/20 border-8 border-white mx-auto z-10">
+              <Image
+                src="/billboard.jpg"
+                alt="HoardSpace Premium Billboard"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2563eb]/20 via-transparent to-transparent pointer-events-none mix-blend-multiply"></div>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
-              Verified Vendors
-            </h3>
-            <p className="text-gray-600">
-              All vendors are verified through our KYC process for your security
-              and trust.
-            </p>
-          </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <div className="p-3 bg-purple-50 rounded-xl w-fit mb-4">
-              <Award className="w-6 h-6 text-blue-600" />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
-              Transparent Pricing
-            </h3>
-            <p className="text-gray-600">
-              Clear pricing with no hidden costs. Book with confidence and
-              manage everything online.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <div className="p-3 bg-orange-50 rounded-xl w-fit mb-4">
-              <Target className="w-6 h-6 text-orange-600" />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
-              Easy Booking
-            </h3>
-            <p className="text-gray-600">
-              Simple booking process with instant confirmation and secure
-              payment options.
-            </p>
-          </div>
-        </div>
-
-         
-        {/* Team Section */}
-        <div className="mt-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Meet Our <span className="text-[#2563eb]">Team</span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Driven by innovation and expertise, our team is committed to
-              transforming outdoor advertising in India
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Team Member 1 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                    src="https://res.cloudinary.com/du5qoczcn/image/upload/v1773081079/IMG_2169_ealh6r.jpg"
-                    alt="Debi Prasad Sahoo"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
+            {/* Floating Attached Feature 1: Top Left */}
+            <div className="absolute top-[5%] left-0 lg:-left-12 z-20 bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-white/50 shadow-[0_20px_40px_-15px_rgba(37,99,235,0.2)] hover:-translate-y-1 transition-transform w-[220px]">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-green-500 rounded-lg shrink-0">
+                  <Building2 className="w-4 h-4 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Debi Prasad Sahoo
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Founder & CEO
-                </p>
-                <p className="text-sm text-gray-600">
-                  Chemical Engineering
-                  <br />
-                  NIT Rourkela
-                </p>
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-900 leading-tight">Premium Locations</h3>
               </div>
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed pl-1">Prime hoarding spots across India.</p>
             </div>
 
-            {/* Team Member 2 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                  src={"https://res.cloudinary.com/du5qoczcn/image/upload/v1773081081/IMG_2170_s2qrjn.jpg"}
-                     alt="Ankush Senapati"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
+            {/* Floating Attached Feature 2: Top Right */}
+            <div className="absolute top-[25%] right-0 lg:-right-8 z-20 bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-white/50 shadow-[0_20px_40px_-15px_rgba(37,99,235,0.2)] hover:-translate-y-1 transition-transform w-[220px]">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-[#2563eb] rounded-lg shrink-0">
+                  <Users className="w-4 h-4 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Ankush Senapati
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Chief Financial Officer
-                </p>
-                <p className="text-sm text-gray-600">
-                  BS Economics
-                  <br />
-                  IIT Patna
-                </p>
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-900 leading-tight">Verified Vendors</h3>
               </div>
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed pl-1">Strict KYC for security & trust.</p>
             </div>
 
-            {/* Team Member 3 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                  src={"https://res.cloudinary.com/du5qoczcn/image/upload/v1773081082/IMG_2171_gll65n.jpg"}
-                      alt="Roupya Swasat Prusty"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
+            {/* Floating Attached Feature 3: Bottom Left */}
+            <div className="absolute bottom-[25%] left-4 lg:-left-4 z-20 bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-white/50 shadow-[0_20px_40px_-15px_rgba(37,99,235,0.2)] hover:-translate-y-1 transition-transform w-[220px]">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-purple-500 rounded-lg shrink-0">
+                  <Award className="w-4 h-4 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Roupya Swasat Prusty
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Business Development Lead
-                </p>
-                <p className="text-sm text-gray-600">
-                  Petroleum Engineering
-                  <br />
-                  IIT (ISM) Dhanbad
-                </p>
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-900 leading-tight">Transparent Pricing</h3>
               </div>
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed pl-1">Clear pricing. No hidden costs.</p>
             </div>
 
-            {/* Team Member 4 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                  src={"https://res.cloudinary.com/du5qoczcn/image/upload/v1773081084/IMG_2175_yzl7jc.jpg"}
-                     alt="Preetam Samal"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
+            {/* Floating Attached Feature 4: Bottom Right */}
+            <div className="absolute bottom-[5%] right-4 lg:-right-4 z-20 bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-white/50 shadow-[0_20px_40px_-15px_rgba(37,99,235,0.2)] hover:-translate-y-1 transition-transform w-[220px]">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-orange-500 rounded-lg shrink-0">
+                  <Target className="w-4 h-4 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Preetam Samal
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Head of Marketing
-                </p>
-                <p className="text-sm text-gray-600">
-                  Food Processing
-                  <br />
-                  NIT Rourkela
-                </p>
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-900 leading-tight">Easy Booking</h3>
               </div>
-            </div>
-
-            {/* Team Member 5 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                  src={"https://res.cloudinary.com/du5qoczcn/image/upload/v1773081081/IMG_2176_xx5ksb.jpg"}
-                     alt="Debansh Sahu"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Debansh Sahu
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Co-founder & CTO
-                </p>
-                <p className="text-sm text-gray-600">
-                  Computer Science
-                  <br />
-                  NIT Rourkela
-                </p>
-              </div>
-            </div>
-
-            {/* Team Member 6 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                  src={"https://res.cloudinary.com/du5qoczcn/image/upload/v1773081077/IMG_2168_s7qqig.jpg"}
-            
-                     alt="Churepally Neha"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Churepally Neha
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Head of Design
-                </p>
-                <p className="text-sm text-gray-600">
-                  Civil Engineering
-                  <br />
-                  NIT Rourkela
-                </p>
-              </div>
-            </div>
-
-            {/* Team Member 7 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                  src={"https://res.cloudinary.com/du5qoczcn/image/upload/v1773081075/IMG_2197_w0sovn.jpg"}
-                     alt="Pulin Mohapatra"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Pulin Mohapatra
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Head of Operations
-                </p>
-                <p className="text-sm text-gray-600">
-                  Mechanical Engineering
-                  <br />
-                  NIT Rourkela
-                </p>
-              </div>
-            </div>
-
-            {/* Team Member 8 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                  src={"https://res.cloudinary.com/du5qoczcn/image/upload/v1773081079/IMG_2174_b7n0re.jpg"}
-
-                     alt="Durgaprasad Sahoo"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Durgaprasad Sahoo
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Co-founder & Head of AI/ML
-                </p>
-                <p className="text-sm text-gray-600">
-                  Artificial Intelligence
-                  <br />& Machine Learning
-                </p>
-              </div>
-            </div>
-
-            {/* Team Member 9 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden border-4 border-white shadow-md">
-                  <Image
-                  src={"https://res.cloudinary.com/du5qoczcn/image/upload/v1773081060/IMG_2177_1_og5vqm.jpg"}
-                     alt="Omkar Ashutosh Behera"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  Omkar Ashutosh Behera
-                </h3>
-                <p className="text-[#2563eb] font-semibold mb-2">
-                  Head of Business Development
-                </p>
-                <p className="text-sm text-gray-600">
-                  Electronics & Communication
-                  <br />
-                  NIT Rourkela
-                </p>
-              </div>
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed pl-1">Instant secure online payments.</p>
             </div>
           </div>
         </div>

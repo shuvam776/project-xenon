@@ -20,12 +20,9 @@ export default function Footer() {
   ];
 
   const popularCities = [
-    { name: "Mumbai", href: "/search?city=Mumbai" },
-    { name: "Delhi", href: "/search?city=Delhi" },
-    { name: "Bangalore", href: "/search?city=Bangalore" },
-    { name: "Hyderabad", href: "/search?city=Hyderabad" },
-    { name: "Chennai", href: "/search?city=Chennai" },
-    { name: "Kolkata", href: "/search?city=Kolkata" },
+    { name: "Bhubaneswar", href: "/explore?city=Bhubaneswar" },
+    { name: "Cuttack", href: "/explore?city=Cuttack" },
+    { name: "Rourkela", href: "/explore?city=Rourkela" },
   ];
 
   const legal = [
@@ -36,7 +33,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-900 text-gray-300 pt-16 pb-8">
+    <footer className="bg-gradient-to-b from-gray-50 to-blue-100/80 text-slate-800 pt-10 pb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
@@ -51,7 +48,7 @@ export default function Footer() {
                 className="h-12 w-auto object-contain"
               />
             </Link>
-            <p className="text-sm text-gray-400 mb-6 max-w-sm">
+            <p className="text-xs font-semibold tracking-wide text-slate-600 mb-6 max-w-sm">
               India's leading platform for booking premium outdoor advertising
               spaces. Connect with verified vendors and grow your brand's
               visibility across top cities.
@@ -60,25 +57,25 @@ export default function Footer() {
             <div className="space-y-3">
               <a
                 href="mailto:bookings@hoardspace.in"
-                className="flex items-center gap-2 text-sm hover:text-[#2563eb] transition-colors"
+                className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-700 hover:text-[#2563eb] transition-colors"
               >
-                <Mail size={16} />
+                <Mail size={14} />
                 <span>bookings@hoardspace.in</span>
               </a>
               <a
                 href="tel:+917655052057"
-                className="flex items-center gap-2 text-sm hover:text-[#2563eb] transition-colors"
+                className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-700 hover:text-[#2563eb] transition-colors"
               >
-                <Phone size={16} />
+                <Phone size={14} />
                 <span>7655-052057</span>
               </a>
               <a
                 href="https://www.google.com/maps/place/Hoardspace+bookings+private+limited/@22.2430295,84.9088836,3670m/data=!3m1!1e3!4m6!3m5!1s0x3a201dc4b4a548d5:0x7066c2143a6fd952!8m2!3d22.2548078!4d84.9031843!16s%2Fg%2F11yxhjq0k1?entry=ttu&g_ep=EgoyMDI2MDMwNC4xIKXMDSoASAFQAw%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-2 text-sm hover:text-[#2563eb] transition-colors"
+                className="flex items-start gap-2 text-xs font-black uppercase tracking-widest text-slate-700 hover:text-[#2563eb] transition-colors"
               >
-                <MapPin size={16} className="mt-0.5 shrink-0" />
+                <MapPin size={14} className="mt-0.5 shrink-0" />
                 <span>
                   TI-103(A), First Floor, TIIR Building (FTBI),
                   <br />
@@ -88,12 +85,12 @@ export default function Footer() {
             </div>
 
             {/* Company Registration Details */}
-            <div className="mt-6 pt-6 border-t border-gray-700">
-              <h4 className="text-white font-semibold text-sm mb-3">
+            <div className="mt-6 pt-6 border-t border-slate-300/30">
+              <h4 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">
                 Company Details
               </h4>
-              <div className="space-y-1.5 text-xs text-gray-400">
-                <p className="font-medium text-gray-300">
+              <div className="space-y-1.5 text-[11px] font-bold tracking-wider text-slate-700">
+                <p className="font-medium text-blue-100">
                   Hoardspace Bookings Private Limited
                 </p>
                 <p>CIN NO: U63120OD2025PTC051640</p>
@@ -105,15 +102,15 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+            <h3 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">
               Quick Links
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm hover:text-[#2563eb] transition-colors"
+                    className="text-xs font-bold tracking-wider text-slate-700 hover:text-[#2563eb] transition-colors block"
                   >
                     {link.name}
                   </Link>
@@ -124,15 +121,15 @@ export default function Footer() {
 
           {/* Categories */}
           <div>
-            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+            <h3 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">
               Categories
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {categories.map((category) => (
                 <li key={category.name}>
                   <Link
                     href={category.href}
-                    className="text-sm hover:text-[#2563eb] transition-colors"
+                    className="text-xs font-bold tracking-wider text-slate-700 hover:text-[#2563eb] transition-colors block"
                   >
                     {category.name}
                   </Link>
@@ -143,15 +140,15 @@ export default function Footer() {
 
           {/* Popular Cities */}
           <div>
-            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
+            <h3 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">
               Popular Cities
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {popularCities.map((city) => (
                 <li key={city.name}>
                   <Link
                     href={city.href}
-                    className="text-sm hover:text-[#2563eb] transition-colors"
+                    className="text-xs font-bold tracking-wider text-slate-700 hover:text-[#2563eb] transition-colors block"
                   >
                     {city.name}
                   </Link>
@@ -162,10 +159,10 @@ export default function Footer() {
         </div>
 
         {/* Social Links */}
-        <div className="border-t border-gray-800 pt-8 mb-8">
+        <div className="border-t border-slate-300/30 pt-8 mb-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div>
-              <h4 className="text-white font-semibold text-sm mb-3 md:mb-0">
+              <h4 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em]">
                 Follow Us
               </h4>
             </div>
@@ -174,7 +171,7 @@ export default function Footer() {
                 href="https://www.linkedin.com/company/hoardspace-bookings-private-limited"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin size={18} />
@@ -183,16 +180,25 @@ export default function Footer() {
                 href="https://x.com/hoardspace1"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
-                aria-label="Twitter"
+                className="w-10 h-10 rounded-full bg-black flex items-center justify-center transition-colors"
+                aria-label="X (formerly Twitter)"
               >
-                <Twitter size={18} />
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="fill-white"
+                >
+                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.497h2.039L6.486 3.24H4.298l13.31 17.41z" />
+                </svg>
               </a>
               <a
                 href="https://www.youtube.com/@HoardSpace"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-[#2563eb] flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-[#ff0000] flex items-center justify-center transition-colors"
                 aria-label="YouTube"
               >
                 <Youtube size={18} />
@@ -202,9 +208,9 @@ export default function Footer() {
         </div>
 
         {/* Supported By Section */}
-        <div className="border-t border-gray-800 pt-8 mb-8">
+        <div className="border-t border-slate-300/30 pt-8 mb-8">
           <div className="text-center mb-6">
-            <h4 className="text-white font-semibold text-sm uppercase tracking-wider">
+            <h4 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em]">
               Supported By
             </h4>
           </div>
@@ -297,18 +303,18 @@ export default function Footer() {
         </div>
 
         {/* Legal Links */}
-        <div className="border-t border-gray-800 pt-8 mb-8">
+        <div className="border-t border-blue-400/20 pt-8 mb-8">
           <div className="flex flex-wrap justify-center gap-6">
             {legal.map((link, index) => (
               <Fragment key={link.name}>
                 <Link
                   href={link.href}
-                  className="text-sm hover:text-[#2563eb] transition-colors"
+                  className="text-sm hover:text-orange-400 transition-colors"
                 >
                   {link.name}
                 </Link>
                 {index < legal.length - 1 && (
-                  <span className="text-gray-700">|</span>
+                  <span className="text-blue-300/50">|</span>
                 )}
               </Fragment>
             ))}
@@ -316,13 +322,10 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-slate-300/30 pt-8">
           <div className="text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-[11px] font-black tracking-widest text-slate-500 uppercase">
               &copy; {currentYear} HoardSpace. All rights reserved.
-            </p>
-            <p className="text-xs text-gray-600 mt-2">
-              Made with ❤️ by Team Webwiz
             </p>
           </div>
         </div>

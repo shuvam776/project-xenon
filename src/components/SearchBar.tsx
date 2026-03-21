@@ -2,8 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Search, MapPin, Navigation } from "lucide-react";
-import { INDIAN_CITIES, HOARDING_TYPES } from "@/utils/cities";
+import { HOARDING_TYPES } from "@/utils/cities";
 import { useRouter } from "next/navigation";
+
+const B3_CITIES = [
+  { city: "Bhubaneswar", state: "Odisha", display: "Bhubaneswar, Odisha" },
+  { city: "Cuttack", state: "Odisha", display: "Cuttack, Odisha" },
+  { city: "Rourkela", state: "Odisha", display: "Rourkela, Odisha" }
+];
 
 export default function SearchBar() {
   const router = useRouter();
@@ -11,16 +17,16 @@ export default function SearchBar() {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredCities, setFilteredCities] = useState(INDIAN_CITIES);
+  const [filteredCities, setFilteredCities] = useState(B3_CITIES);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Filter cities based on input
   useEffect(() => {
     if (cityInput.trim() === "") {
-      setFilteredCities(INDIAN_CITIES);
+      setFilteredCities(B3_CITIES);
     } else {
-      const filtered = INDIAN_CITIES.filter(
+      const filtered = B3_CITIES.filter(
         (cityObj) =>
           cityObj.city.toLowerCase().includes(cityInput.toLowerCase()) ||
           cityObj.state.toLowerCase().includes(cityInput.toLowerCase()) ||
@@ -45,7 +51,7 @@ export default function SearchBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleCitySelect = (cityObj: (typeof INDIAN_CITIES)[0]) => {
+  const handleCitySelect = (cityObj: (typeof B3_CITIES)[0]) => {
     setSelectedCity(cityObj.city);
     setCityInput(cityObj.display);
     setShowSuggestions(false);
@@ -87,7 +93,7 @@ export default function SearchBar() {
 
           if (locationName) {
             // Find matching city in our list
-            const cityObj = INDIAN_CITIES.find(
+            const cityObj = B3_CITIES.find(
               (c) =>
                 c.city.toLowerCase() === locationName.toLowerCase() ||
                 c.display.toLowerCase().includes(locationName.toLowerCase()),
@@ -130,16 +136,16 @@ export default function SearchBar() {
     if (selectedCity) params.append("city", selectedCity);
     if (selectedType) params.append("type", selectedType);
 
-    // Navigate to search page
-    router.push(`/search?${params.toString()}`);
+    // Navigate to explore page
+    router.push(`/explore?${params.toString()}`);
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
+    <div className="bg-white rounded-none shadow-[6px_6px_0px_0px_rgba(30,41,59,0.5)] border border-blue-200 p-6 md:p-10 relative">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 relative z-10">
         {/* City Input with Autocomplete */}
         <div className="md:col-span-5 relative" ref={suggestionsRef}>
-          <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wider">
+          <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-[0.2em]">
             City
           </label>
           <div className="relative">
@@ -151,8 +157,8 @@ export default function SearchBar() {
                 setShowSuggestions(true);
               }}
               onFocus={() => setShowSuggestions(true)}
-              placeholder="Search by city (e.g., Mumbai, Maharashtra)"
-              className="w-full px-4 py-3.5 pl-11 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2563eb] focus:border-[#2563eb] outline-none transition-all text-sm font-medium text-gray-900"
+              placeholder="Search by city"
+              className="w-full px-4 py-3 pl-11 border border-blue-200 focus:ring-0 focus:border-blue-400 bg-transparent outline-none transition-colors text-sm font-bold tracking-wide text-slate-900 placeholder:font-medium placeholder:text-slate-400"
             />
             <MapPin
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
@@ -174,15 +180,15 @@ export default function SearchBar() {
 
           {/* Autocomplete Suggestions */}
           {showSuggestions && filteredCities.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-64 overflow-y-auto z-50">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-blue-200 rounded-none shadow-2xl shadow-blue-900/10 max-h-64 overflow-y-auto z-50 outline-none divide-y divide-slate-100">
               {filteredCities.slice(0, 10).map((cityObj, index) => (
                 <button
                   key={index}
                   onClick={() => handleCitySelect(cityObj)}
-                  className="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                  className="w-full px-4 py-4 text-left hover:bg-slate-50 hover:pl-6 transition-all duration-300 flex items-center gap-4 group"
                 >
-                  <MapPin size={16} className="text-gray-400 shrink-0" />
-                  <span className="text-sm font-medium text-gray-900">
+                  <MapPin size={14} className="text-slate-400 group-hover:text-[#2563eb] transition-colors shrink-0" />
+                  <span className="text-[11px] font-black uppercase tracking-widest text-slate-600 group-hover:text-[#2563eb] transition-colors">
                     {cityObj.display}
                   </span>
                 </button>
@@ -193,17 +199,17 @@ export default function SearchBar() {
 
         {/* Hoarding Type Dropdown */}
         <div className="md:col-span-4">
-          <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wider">
+          <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-[0.2em]">
             Hoarding Type
           </label>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2563eb] focus:border-[#2563eb] outline-none transition-all bg-white text-sm font-medium text-gray-700"
+            className="w-full px-4 py-3 border border-blue-200 focus:ring-0 focus:border-blue-400 bg-transparent outline-none transition-colors text-sm font-bold tracking-wide text-slate-900 appearance-none cursor-pointer"
           >
-            <option value="">All Types</option>
+            <option value="" className="text-xs uppercase tracking-wider font-bold">ALL TYPES</option>
             {HOARDING_TYPES.map((type) => (
-              <option key={type} value={type}>
+              <option key={type} value={type} className="text-xs uppercase tracking-wider font-bold">
                 {type}
               </option>
             ))}
@@ -214,10 +220,12 @@ export default function SearchBar() {
         <div className="md:col-span-3 flex items-end">
           <button
             onClick={handleSearch}
-            className="w-full bg-[#2563eb] hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="group w-full bg-slate-900 hover:bg-[#2563eb] text-white font-black text-[11px] uppercase tracking-[0.15em] py-4 px-6 rounded-none transition-all flex items-center justify-center shadow-xl hover:-translate-y-1 overflow-hidden"
           >
-            <Search size={20} />
-            Search
+            <div className="w-0 opacity-0 overflow-hidden transition-all duration-300 ease-out group-hover:w-5 group-hover:opacity-100 group-hover:mr-2 flex items-center justify-center">
+              <Search size={16} className="shrink-0" />
+            </div>
+            <span className="transition-transform duration-300">Search</span>
           </button>
         </div>
       </div>

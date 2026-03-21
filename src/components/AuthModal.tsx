@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -214,25 +215,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-blue-500/30 blur-3xl"></div>
           <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-indigo-400/30 blur-3xl"></div>
 
-          <div className="relative z-10">
-            <div className="flex items-center gap-2">
-              {/* Small Logo */}
-              <div className="bg-white/20 p-1.5 rounded">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  className="w-5 h-5 text-white"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-              <span className="font-bold tracking-wide">HOARDSPACE</span>
+          <div className="relative z-20 isolate">
+            <div className="flex items-center gap-2 mix-blend-multiply">
+              {/* Actual Logo with forced blending properties */}
+              <Image
+                src="/companyLogo/Screenshot 2026-03-02 at 02.10.29.png"
+                alt="HoardSpace Logo"
+                width={160}
+                height={50}
+                className="h-10 w-auto object-contain contrast-[1.2] brightness-110"
+                style={{ mixBlendMode: 'multiply' }}
+                priority
+              />
             </div>
           </div>
         </div>

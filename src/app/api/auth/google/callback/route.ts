@@ -84,17 +84,8 @@ export async function GET(req: NextRequest) {
             }
             await user.save();
         } else {
-            // New user - create account
-            user = await User.create({
-                name: googleUser.name || googleUser.email.split('@')[0],
-                email: googleUser.email,
-                googleId: googleUser.id,
-                image: googleUser.picture,
-                authProvider: 'google',
-                emailVerified: true, // Google already verified
-                role: 'buyer', // Default role
-                kycStatus: 'not_submitted',
-            });
+            // New user trying to login without registering first
+            return NextResponse.redirect(new URL('/?error=Please%20register%20first', req.url));
         }
 
         // Generate JWT tokens (same as email verification flow)
