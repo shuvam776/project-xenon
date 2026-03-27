@@ -1,9 +1,18 @@
+"use client";
+
 import { Fragment } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Phone, MapPin, Twitter, Linkedin, Youtube } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+  
+  if (pathname?.includes("/dashboard") || pathname?.startsWith("/profile")) {
+    return null;
+  }
+
   const currentYear = new Date().getFullYear();
 
   const quickLinks = [
@@ -90,12 +99,14 @@ export default function Footer() {
                 Company Details
               </h4>
               <div className="space-y-1.5 text-[11px] font-bold tracking-wider text-slate-700">
-                <p className="font-medium text-blue-100">
+                <p >
                   Hoardspace Bookings Private Limited
                 </p>
                 <p>CIN NO: U63120OD2025PTC051640</p>
                 <p>PAN NO: AAICH3418E</p>
                 <p>TAN NO: BBNH01998D</p>
+                <p>CKYC NO: 90003349208072</p>
+                <p>GSTIN NO: 21AAICH3418E1Z3</p>
               </div>
             </div>
           </div>
