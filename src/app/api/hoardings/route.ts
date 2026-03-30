@@ -118,7 +118,7 @@ export async function POST(req: Request) {
         area: data.area,
         state: data.state,
         zipCode: data.zipCode,
-        coordinates: (data.latitude && data.longitude) ? { lat: data.latitude, lng: data.longitude } : undefined
+        ...((data.latitude && data.longitude) ? { coordinates: { lat: data.latitude, lng: data.longitude } } : {})
       },
       dimensions: {
         width: data.width,
