@@ -152,13 +152,20 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
 
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredHoardings.map((hoarding) => (
+            {filteredHoardings.map((hoarding, idx) => {
+              const sampleImages = [
+                'https://res.cloudinary.com/dpju1wia5/image/upload/v1774848145/v4malipjjxwiovgncshj.png',
+                'https://res.cloudinary.com/dpju1wia5/image/upload/v1774848146/rcmhjqgezin7s7hbsiii.png',
+              ];
+              const placeholderImage = sampleImages[idx % sampleImages.length];
+
+              return (
               <Link href={`/hoardings/${hoarding._id}`} key={hoarding._id}>
                 <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer h-full flex flex-col">
                   {/* Image */}
                   <div className="relative w-full aspect-[16/9] overflow-hidden bg-gray-100">
                     <Image
-                      src={hoarding.images?.[0] || 'https://images.unsplash.com/photo-1542744094-24638ea0b3b5'}
+                      src={hoarding.images?.[0] || placeholderImage}
                       alt={hoarding.name}
                       fill
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
@@ -191,7 +198,8 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                   </div>
                 </div>
               </Link>
-            ))}
+              );
+            })}
 
             {filteredHoardings.length === 0 && (
               <div className="col-span-full py-12 text-center text-gray-500 bg-gray-50 rounded-xl">

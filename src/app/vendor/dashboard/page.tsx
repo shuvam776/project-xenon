@@ -104,6 +104,7 @@ export default function VendorDashboard() {
   });
   const [pincodeLoading, setPincodeLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // Authentication check
   useEffect(() => {
@@ -254,6 +255,30 @@ export default function VendorDashboard() {
       latitude: location.lat,
       longitude: location.lng
     }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setUploading(true);
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        const updated = [...newHoarding.images];
+        updated[index] = data.url;
+        setNewHoarding({ ...newHoarding, images: updated });
+      } else {
+        alert(data.error || "Upload failed");
+      }
+    } catch (err) {
+      alert("Failed to upload image");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
   };
 
   const handleCreateHoarding = async (e: React.FormEvent) => {
@@ -618,25 +643,38 @@ export default function VendorDashboard() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 block">Property Images (URLs)</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 block">Property Images (Upload)</label>
                   {newHoarding.images.map((url: string, index: number) => (
                     <div key={index} className="flex gap-2">
-                      <input 
-                        type="url" 
-                        placeholder="https://images.cloudinary.com/..."
-                        className="flex-1 px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                        value={url}
-                        onChange={(e) => {
-                          const updated = [...newHoarding.images];
-                          updated[index] = e.target.value;
-                          setNewHoarding({...newHoarding, images: updated});
-                        }}
-                      />
+                      {url ? (
+                        <div className="flex-1 relative rounded-2xl overflow-hidden bg-gray-100 h-16 flex items-center justify-center">
+                           <img src={url} className="absolute inset-0 w-full h-full object-cover" />
+                           <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                             <a href={url} target="_blank" className="text-white text-xs font-bold">View</a>
+                           </div>
+                        </div>
+                      ) : (
+                        <div className="flex-1 relative px-5 py-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl focus-within:ring-2 focus-within:ring-blue-600 outline-none flex items-center justify-center min-h-[64px] hover:bg-gray-100 transition-colors">
+                          {uploading ? (
+                            <Loader2 className="animate-spin text-blue-600" size={20} />
+                          ) : (
+                            <>
+                              <span className="text-sm font-bold text-gray-700">Click to Upload to Cloudinary</span>
+                              <input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={(e) => handleImageUpload(e, index)}
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                              />
+                            </>
+                          )}
+                        </div>
+                      )}
                       {index === newHoarding.images.length - 1 ? (
                         <button 
                           type="button"
                           onClick={() => setNewHoarding({...newHoarding, images: [...newHoarding.images, ""]})}
-                          className="p-4 bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-100 transition-colors"
+                          className="p-4 bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-100 transition-colors self-start"
                         >
                           <PlusCircle size={24} />
                         </button>
@@ -647,7 +685,7 @@ export default function VendorDashboard() {
                             const updated = newHoarding.images.filter((_: any, i: number) => i !== index);
                             setNewHoarding({...newHoarding, images: updated});
                           }}
-                          className="p-4 bg-red-50 text-red-50 rounded-2xl hover:bg-red-100 transition-colors"
+                          className="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-100 transition-colors self-start"
                         >
                           <Trash2 size={24} />
                         </button>

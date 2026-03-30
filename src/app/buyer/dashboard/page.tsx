@@ -69,10 +69,36 @@ interface Stats {
 
 type TabType = "overview" | "campaigns" | "wishlist" | "chat";
 
+interface UserData {
+  _id: string;
+  name: string;
+  role: string;
+  email?: string;
+}
+
+interface WishlistItem {
+  _id: string;
+  name: string;
+  images: string[];
+  location: {
+    address: string;
+    city: string;
+    state: string;
+  };
+  pricePerMonth: number;
+}
+
+interface ChatMessage {
+  _id: string;
+  sender: string;
+  content: string;
+  createdAt?: string;
+}
+
 export default function BuyerDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeBookings, setActiveBookings] = useState<Booking[]>([]);
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
@@ -86,8 +112,8 @@ export default function BuyerDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
   // Additional dynamic data
-  const [wishlist, setWishlist] = useState<any[]>([]);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatMessage, setChatMessage] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
 
@@ -534,7 +560,7 @@ export default function BuyerDashboard() {
                 {bookings.length === 0 && (
                    <div className="md:col-span-2 text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                       <Package size={48} className="mx-auto text-gray-300 mb-4" />
-                      <p className="text-gray-500 font-bold">You haven't booked any campaigns yet</p>
+                      <p className="text-gray-500 font-bold">You haven&apos;t booked any campaigns yet</p>
                       <Link href="/" className="mt-4 inline-block text-blue-600 font-bold hover:underline">Start Exploring</Link>
                    </div>
                 )}
