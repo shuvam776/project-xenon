@@ -216,7 +216,6 @@ export default function SearchBar() {
           </select>
         </div>
 
-        {/* Search Button */}
         <div className="md:col-span-3 flex items-end">
           <button
             onClick={handleSearch}

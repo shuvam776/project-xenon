@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import "@fontsource/chiron-goround-tc";
 import {
   Calendar,
   MapPin,
@@ -74,6 +75,7 @@ interface UserData {
   name: string;
   role: string;
   email?: string;
+  image?: string;
 }
 
 interface WishlistItem {
@@ -116,6 +118,38 @@ export default function BuyerDashboard() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatMessage, setChatMessage] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: 1, text: "Your booking for 'Patia Square Billboard' is confirmed!", type: "confirmation", isRead: false, isRemoving: false, timestamp: "2 hours ago" },
+    { id: 2, text: "Admin: New premium locations are now available for booking in Cuttack.", type: "admin", isRead: false, isRemoving: false, timestamp: "Yesterday" }
+  ]);
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(n => !n.isRead ? { ...n, isRemoving: true } : n));
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.isRead));
+    }, 300);
+  };
+
+  const markRead = (id: number) => {
+    setNotifications(notifications.map(n => n.id === id ? { ...n, isRemoving: true } : n));
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 300);
+  };
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -262,24 +296,16 @@ export default function BuyerDashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-[#F8F9FD] overflow-hidden">
+    <div className="flex h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 overflow-hidden" style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}>
       {/* Sidebar */}
-      <aside className="w-72 bg-white border-r border-gray-100 items-center py-8 px-6 hidden lg:flex lg:flex-col">
-        <div className="mb-12 w-full flex items-center gap-3">
-          <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-xl shadow-blue-100">
-            H
-          </div>
-          <span className="text-2xl font-black text-gray-900 tracking-tight">
-            HoardSpace
-          </span>
-        </div>
+      <aside className="w-64 bg-white border-r border-gray-100 items-center pt-4 pb-8 px-4 hidden lg:flex lg:flex-col">
+        <div className="mb-2 w-full px-2"></div>
 
         <nav className="flex-1 w-full space-y-2">
           {[
             { id: "overview", icon: LayoutDashboard, label: "Dashboard" },
             { id: "campaigns", icon: Package, label: "My Campaigns" },
             { id: "wishlist", icon: Heart, label: "Wishlist" },
-            { id: "chat", icon: MessageSquare, label: "Admin Chat" },
           ].map((item) => (
             <button
               key={item.id}
@@ -328,70 +354,109 @@ export default function BuyerDashboard() {
           <div className="flex items-center gap-10">
             <div className="hidden md:flex relative group">
               <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors"
-                size={20}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 transition-colors"
+                size={18}
               />
               <input
                 type="text"
                 placeholder="Search campaigns, dates, locations..."
-                className="pl-12 pr-6 py-3 bg-gray-50 border-none rounded-2xl w-96 text-sm focus:ring-2 focus:ring-blue-500/10 transition-all outline-none"
+                className="pl-11 pr-6 py-2.5 bg-white border-2 border-blue-500 rounded-none w-96 text-sm focus:ring-4 focus:ring-blue-500/10 transition-all outline-none text-slate-900 font-bold placeholder-slate-400"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <button className="p-3 bg-gray-50 text-gray-400 hover:text-blue-600 rounded-xl relative transition-all">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
-            <div className="flex items-center gap-4 pl-6 border-l border-gray-100">
+          <div className="flex items-center gap-6 relative">
+            <div className="relative" ref={notificationRef}>
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`p-3 rounded-xl relative transition-all ${showNotifications ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-400 hover:text-blue-500'}`}
+              >
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                )}
+              </button>
+
+              {showNotifications && (
+                <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 py-4 animate-in fade-in zoom-in-95 duration-200 z-50 overflow-hidden">
+                  <div className="px-5 mb-3 flex items-center justify-between">
+                    <h4 className="font-black text-gray-900">Notifications</h4>
+                    {unreadCount > 0 && (
+                      <span className="text-[10px] font-black uppercase text-blue-500 bg-blue-50 px-2 py-1 rounded-lg">
+                        {unreadCount} New
+                      </span>
+                    )}
+                  </div>
+                  <div className="max-h-[300px] overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.map((notif) => (
+                        <div 
+                          key={notif.id}
+                          className={`px-5 py-4 hover:bg-gray-50 border-l-4 transition-all duration-300 cursor-pointer group relative ${notif.isRemoving ? 'opacity-0 -translate-x-8 scale-95 border-transparent' : notif.isRead ? 'border-transparent opacity-60' : 'border-blue-500 bg-blue-50/5'}`}
+                        >
+                          <p className={`text-xs font-bold leading-tight ${notif.isRead ? 'text-gray-500' : 'text-gray-900'}`}>
+                            {notif.text}
+                          </p>
+                          <p className="text-[10px] text-gray-400 mt-1">{notif.timestamp}</p>
+                          {!notif.isRead && (
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                markRead(notif.id);
+                              }}
+                              className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity bg-white px-2 py-1 rounded-md shadow-sm border border-blue-100"
+                            >
+                              Mark read
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-5 py-10 text-center">
+                        <Bell className="mx-auto w-8 h-8 text-gray-200 mb-3" />
+                        <p className="text-xs font-bold text-gray-400">You have no new messages.</p>
+                      </div>
+                    )}
+                  </div>
+                  {notifications.length > 0 && unreadCount > 0 && (
+                    <div className="mt-2 px-5 pt-3 border-t border-gray-50">
+                      <button 
+                        onClick={markAllAsRead}
+                        className="w-full text-[10px] font-black uppercase text-gray-400 hover:text-blue-500 transition-colors text-center"
+                      >
+                        Mark all as read
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <Link href="/profile" className="flex items-center gap-4 pl-6 border-l border-gray-100 group">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-black text-gray-900">{user?.name}</p>
+                <p className="text-sm font-black text-gray-900 group-hover:text-blue-600 transition-colors">{user?.name}</p>
                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                   Premium Buyer
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl p-[2px]">
+              <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl p-[2px] transition-transform group-hover:scale-105 overflow-hidden">
                 <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center p-1">
-                  <div className="w-full h-full bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 font-black">
-                    {user?.name?.[0].toUpperCase()}
+                  <div className="w-full h-full bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 font-black overflow-hidden">
+                    {user?.image ? (
+                      <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      user?.name?.[0].toUpperCase()
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         </header>
 
         <div className="p-10 space-y-10 max-w-7xl mx-auto">
           {activeTab === "overview" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-10">
-              <div className="relative bg-blue-600 rounded-[40px] p-12 text-white overflow-hidden shadow-2xl shadow-blue-100">
-                <div className="relative z-10 space-y-6">
-                  <div className="space-y-2">
-                    <h2 className="text-5xl font-black tracking-tight leading-tight">
-                      Welcome to your Portal!
-                    </h2>
-                    <p className="text-blue-100 text-lg font-medium opacity-90 max-w-lg">
-                      Track your advertising campaigns and manage your premium
-                      hoarding bookings from one place.
-                    </p>
-                  </div>
-                  <div className="flex gap-4 pt-4">
-                    <Link
-                      href="/"
-                      className="bg-white text-blue-600 px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:scale-105 transition-transform shadow-lg"
-                    >
-                      Browse New Locations <ArrowUpRight size={18} />
-                    </Link>
-                    <button
-                      onClick={() => setActiveTab("chat")}
-                      className="bg-blue-500/30 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-2xl font-bold hover:bg-blue-500/40 transition-all"
-                    >
-                      Express Support
-                    </button>
-                  </div>
-                </div>
-              </div>
+              {/* Removed Welcome Banner */}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import "@fontsource/chiron-goround-tc";
 import {
   User,
   Mail,
@@ -350,8 +351,14 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 py-12 px-4 sm:px-6 lg:px-8" style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}>
       <div className="max-w-4xl mx-auto space-y-6">
+        <div className="mb-2">
+          <h2 className="text-4xl font-black tracking-tight leading-tight">
+            <span className="font-sans font-black text-slate-900 mr-2">Your</span>
+            <span className="font-serif italic bg-[linear-gradient(110deg,#2563eb,45%,#dbeafe,55%,#2563eb)] bg-[length:200%_auto] text-transparent bg-clip-text animate-shine drop-shadow-sm">Profile</span>
+          </h2>
+        </div>
         {/* Header / Profile Card */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
           <div className="bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] h-32 relative">

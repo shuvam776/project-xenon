@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import "@fontsource/chiron-goround-tc";
 import MapLocationPicker from "@/components/MapLocationPicker";
 import { getLocationFromPincode, isValidIndianPincode } from "@/lib/googleMaps";
 import {
@@ -29,6 +30,7 @@ import {
   MoreVertical,
   XCircle,
   X,
+  Bell,
 } from "lucide-react";
 
 interface Hoarding {
@@ -105,6 +107,38 @@ export default function VendorDashboard() {
   const [pincodeLoading, setPincodeLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: 1, text: "Incoming inquiry for 'KIIT Square Billboard'.", type: "inquiry", isRead: false, isRemoving: false, timestamp: "1 hour ago" },
+    { id: 2, text: "Admin: Your documentation for 'Patia' has been verified.", type: "admin", isRead: false, isRemoving: false, timestamp: "3 hours ago" }
+  ]);
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(n => !n.isRead ? { ...n, isRemoving: true } : n));
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.isRead));
+    }, 300);
+  };
+
+  const markRead = (id: number) => {
+    setNotifications(notifications.map(n => n.id === id ? { ...n, isRemoving: true } : n));
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 300);
+  };
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Authentication check
   useEffect(() => {
@@ -360,15 +394,10 @@ export default function VendorDashboard() {
   );
 
   return (
-    <div className="flex h-screen bg-[#F8F9FD] overflow-hidden">
+    <div className="flex h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 overflow-hidden" style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}>
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-100 items-center py-8 px-4 hidden lg:flex lg:flex-col">
-        <div className="mb-10 w-full px-2 flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-200">
-            H
-          </div>
-          <span className="font-bold text-xl tracking-tight text-gray-800">HoardSpace</span>
-        </div>
+      <aside className="w-64 bg-white border-r border-gray-100 items-center pt-4 pb-8 px-4 hidden lg:flex lg:flex-col">
+        <div className="mb-2 w-full px-2"></div>
 
         <nav className="w-full flex-1 space-y-2">
           <NavItem 
@@ -389,12 +418,6 @@ export default function VendorDashboard() {
             active={activeTab === "sold"} 
             onClick={() => setActiveTab("sold")} 
           />
-          <NavItem 
-            icon={<MessageSquare size={20} />} 
-            label="Admin Chat" 
-            active={activeTab === "chat"} 
-            onClick={() => setActiveTab("chat")} 
-          />
         </nav>
 
         <div className="w-full mt-auto pt-4 border-t border-gray-100">
@@ -408,7 +431,7 @@ export default function VendorDashboard() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto relative bg-[#F8F9FD]">
+      <main className="flex-1 overflow-y-auto relative">
         {/* Header */}
         <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
@@ -416,30 +439,100 @@ export default function VendorDashboard() {
               {activeTab === "dashboard" ? "Vendor Overview" : activeTab === "listings" ? "Hoarding Inventory" : activeTab === "sold" ? "Confirmed Bookings" : "Admin Communication"}
             </h1>
             <div className="relative max-w-md w-full ml-4 hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-500 transition-colors" size={16} />
               <input 
                 type="text" 
                 placeholder="Search listings, locations, orders..." 
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none"
+                className="w-full pl-10 pr-4 py-2 bg-white border-2 border-blue-500 rounded-none text-sm focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-900 font-bold placeholder-slate-400 transition-all"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-lg relative">
-              <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></div>
-              <MessageSquare size={20} />
-            </button>
-            <div className="w-px h-6 bg-gray-200 mx-2"></div>
-            <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg pr-3 transition-colors">
-              <div className="w-9 h-9 bg-orange-100 rounded-full flex items-center justify-center text-orange-600">
-                <User size={20} />
-              </div>
-              <div className="hidden sm:block">
-                <p className="text-xs font-bold text-gray-900 leading-none">{userData?.name || "Vendor"}</p>
-                <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-wider font-semibold">Active Portal</p>
-              </div>
+            <div className="relative" ref={notificationRef}>
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`p-3 rounded-xl relative transition-all ${showNotifications ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-400 hover:text-blue-500'}`}
+              >
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                )}
+              </button>
+
+              {showNotifications && (
+                <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 py-4 animate-in fade-in zoom-in-95 duration-200 z-50 overflow-hidden">
+                  <div className="px-5 mb-3 flex items-center justify-between">
+                    <h4 className="font-black text-gray-900">Notifications</h4>
+                    {unreadCount > 0 && (
+                      <span className="text-[10px] font-black uppercase text-blue-500 bg-blue-50 px-2 py-1 rounded-lg">
+                        {unreadCount} New
+                      </span>
+                    )}
+                  </div>
+                  <div className="max-h-[300px] overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.map((notif) => (
+                        <div 
+                          key={notif.id}
+                          className={`px-5 py-4 hover:bg-gray-50 border-l-4 transition-all duration-300 cursor-pointer group relative ${notif.isRemoving ? 'opacity-0 -translate-x-8 scale-95 border-transparent' : notif.isRead ? 'border-transparent opacity-60' : 'border-blue-500 bg-blue-50/5'}`}
+                        >
+                          <p className={`text-xs font-bold leading-tight ${notif.isRead ? 'text-gray-500' : 'text-gray-900'}`}>
+                            {notif.text}
+                          </p>
+                          <p className="text-[10px] text-gray-400 mt-1">{notif.timestamp}</p>
+                          {!notif.isRead && (
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                markRead(notif.id);
+                              }}
+                              className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity bg-white px-2 py-1 rounded-md shadow-sm border border-blue-100"
+                            >
+                              Mark read
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-5 py-10 text-center">
+                        <Bell className="mx-auto w-8 h-8 text-gray-200 mb-3" />
+                        <p className="text-xs font-bold text-gray-400">You have no new messages.</p>
+                      </div>
+                    )}
+                  </div>
+                  {notifications.length > 0 && unreadCount > 0 && (
+                    <div className="mt-2 px-5 pt-3 border-t border-gray-50">
+                      <button 
+                        onClick={markAllAsRead}
+                        className="w-full text-[10px] font-black uppercase text-gray-400 hover:text-blue-500 transition-colors text-center"
+                      >
+                        Mark all as read
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
+            <Link href="/profile" className="flex items-center gap-4 pl-6 border-l border-gray-100 group">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-black text-gray-900 group-hover:text-blue-600 transition-colors">{userData?.name || "Vendor"}</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                  Verified Vendor
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl p-[2px] transition-transform group-hover:scale-105 overflow-hidden">
+                <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center p-1">
+                  <div className="w-full h-full bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 font-black overflow-hidden">
+                    {userData?.image ? (
+                      <img src={userData.image} alt={userData.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <User size={20} />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Link>
           </div>
         </header>
 
@@ -793,22 +886,7 @@ function Overview({ bookings, hoardings, setActiveTab, setIsAddModalOpen }: { bo
   
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      {/* Welcome Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-blue-600 p-8 rounded-3xl text-white overflow-hidden relative shadow-xl shadow-blue-100">
-        <div className="relative z-10">
-          <h2 className="text-2xl font-extrabold mb-1">Congratulations, Vendor!</h2>
-          <p className="text-blue-100 text-sm opacity-90">Your listings have reached over 12.4k potential buyers this month.</p>
-          <button className="mt-6 px-6 py-2.5 bg-white text-blue-600 rounded-full font-bold text-xs hover:bg-blue-50 transition-colors">
-            View Analytics Detail
-          </button>
-        </div>
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-linear-to-l from-blue-500/20 to-transparent pointer-events-none"></div>
-        <div className="flex flex-col items-center justify-center bg-blue-500/30 backdrop-blur-md px-10 py-6 rounded-3xl border border-blue-400/50 relative z-10 min-w-[200px]">
-          <span className="text-blue-100 text-[10px] font-bold uppercase tracking-widest mb-1">Portal Score</span>
-          <p className="text-4xl font-black">98 <span className="text-sm font-medium">pts</span></p>
-          <button className="mt-4 text-[10px] font-bold uppercase tracking-widest hover:underline">Explore More</button>
-        </div>
-      </div>
+      {/* Removed Welcome Section */}
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

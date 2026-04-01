@@ -45,6 +45,7 @@ type AuthApiResponse = {
   resendAvailableIn?: number;
   user?: {
     isPhoneVerified: boolean;
+    role: "buyer" | "vendor" | "admin";
   };
 };
 
@@ -287,7 +288,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setNotice("");
       } else {
         handleClose();
-        window.location.reload();
+        const userRole = result.user?.role || "buyer";
+        if (userRole === "vendor") {
+          window.location.href = "/vendor/dashboard";
+        } else if (userRole === "admin") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/buyer/dashboard";
+        }
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");
@@ -386,7 +394,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       if (!res.ok) throw new Error(result.error || "Phone verification failed");
 
       handleClose();
-      window.location.reload();
+      const userRole = result.user?.role || "buyer";
+      if (userRole === "vendor") {
+        window.location.href = "/vendor/dashboard";
+      } else if (userRole === "admin") {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/buyer/dashboard";
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Phone verification failed");
     } finally {
