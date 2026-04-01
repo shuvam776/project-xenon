@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useSearchParams, useParams, useRouter } from "next/navigation";
 import {
   MapPin,
   Calendar,
@@ -40,7 +40,57 @@ export default function BookingPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const [blockedDates, setBlockedDates] = useState<any[]>([]);
+  const [dateError, setDateError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  useEffect(() => {
+    const start = searchParams.get("start");
+    const end = searchParams.get("end");
+    if (start) setStartDate(start);
+    if (end) setEndDate(end);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      try {
+        const res = await fetch(`/api/hoardings/${id}/availability`);
+        if (res.ok) {
+          const data = await res.json();
+          setBlockedDates(data.blockedRanges || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch availability", err);
+      }
+    };
+    if (id) fetchAvailability();
+  }, [id]);
+
+  const validateDates = (start: string, end: string) => {
+    if (!start || !end) return true;
+    const s = new Date(start);
+    const e = new Date(end);
+    
+    if (s > e) {
+      setDateError("Start date cannot be after end date");
+      return false;
+    }
+
+    const overlap = blockedDates.find(range => {
+      const bStart = new Date(range.startDate);
+      const bEnd = new Date(range.endDate);
+      return s <= bEnd && e >= bStart;
+    });
+
+    if (overlap) {
+      setDateError("Selected dates overlap with an existing booking or block.");
+      return false;
+    }
+
+    setDateError("");
+    return true;
+  };
 
   useEffect(() => {
     const checkUser = async () => {
@@ -103,6 +153,10 @@ export default function BookingPage() {
   const handlePayment = async () => {
     if (!startDate || !endDate) {
       setError("Please select campaign dates");
+      return;
+    }
+    if (!validateDates(startDate, endDate)) {
+      setError("Selected dates are unavailable.");
       return;
     }
     setProcessing(true);
@@ -395,11 +449,44 @@ export default function BookingPage() {
                       className="w-full pl-12 pr-6 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600/10 font-bold text-gray-700"
                       min={startDate}
                       value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
+                      onChange={(e) => {
+                        setEndDate(e.target.value);
+                        validateDates(startDate, e.target.value);
+                      }}
                     />
                   </div>
                 </div>
               </div>
+
+              {(dateError || error || successMsg) && (
+                <div
+                  className={`p-4 text-xs font-bold rounded-2xl border animate-in fade-in slide-in-from-top-2 ${
+                    error || dateError
+                      ? "bg-red-50 text-red-600 border-red-100"
+                      : "bg-green-50 text-green-600 border-green-100"
+                  }`}
+                >
+                  {error || dateError ? `Error: ${error || dateError}` : successMsg}
+                </div>
+              )}
+
+              {blockedDates.length > 0 && (
+                <div className="space-y-3 bg-gray-50/50 p-6 rounded-[25px] border border-gray-100">
+                  <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Already Booked Dates</h4>
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                    {blockedDates.map((range, i) => (
+                      <div key={i} className="flex justify-between items-center text-[11px] p-2 bg-white rounded-xl border border-gray-50 shadow-sm">
+                        <span className="font-bold text-gray-600">
+                          {new Date(range.startDate).toLocaleDateString()} - {new Date(range.endDate).toLocaleDateString()}
+                        </span>
+                        <span className="text-[9px] font-black uppercase px-2 py-1 bg-red-50 text-red-500 rounded-md">
+                          {range.type === 'booking' ? 'Booked' : 'Blocked'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <button
                 onClick={handlePayment}
@@ -489,17 +576,7 @@ export default function BookingPage() {
                 </div>
               </div>
 
-              {(error || successMsg) && (
-                <div
-                  className={`p-4 text-xs font-bold rounded-2xl border animate-in fade-in slide-in-from-top-2 ${
-                    error
-                      ? "bg-red-50 text-red-600 border-red-100"
-                      : "bg-green-50 text-green-600 border-green-100"
-                  }`}
-                >
-                  {error ? `Error: ${error}` : successMsg}
-                </div>
-              )}
+
             </div>
           </div>
         </div>

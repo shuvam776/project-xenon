@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { User, Menu, X, LayoutDashboard } from "lucide-react";
 import AuthModal from "./AuthModal";
 import { checkAuth, logout } from "@/lib/fetchWithAuth";
@@ -11,6 +12,16 @@ export default function Navbar() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
+  const desktopMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const isDashboardPage = pathname?.startsWith("/buyer") || pathname?.startsWith("/vendor");
+
+  // Close menus when path changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+    setIsDesktopMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     // Check for authentication via cookie (with auto-refresh)
@@ -21,7 +32,7 @@ export default function Navbar() {
       }
     };
     loadUser();
-  }, [isAuthOpen]); // Re-check when auth modal closes
+  }, [isAuthOpen]);
 
   const handleLogout = async () => {
     await logout();
@@ -51,57 +62,51 @@ export default function Navbar() {
               </div>
 
               {/* Center: Global Navigation Links */}
-              <div className="hidden min-[731px]:flex flex-1 justify-center items-center gap-8 font-sans h-full">
+              <div className="hidden lg:flex flex-1 justify-center items-center gap-6 xl:gap-8 font-sans h-full">
                 <Link href="/#home" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
                   Home
                 </Link>
+                {user && (
+                  <Link
+                    href={`/${user.role}/dashboard`}
+                    className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full"
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
                   Explore
                 </Link>
                 <Link href="/#how-it-works" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
-                  How it Works
+                  How It Works
                 </Link>
                 <Link href="/#about" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
                   About Us
                 </Link>
                 <Link href="/contact" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
-                  Contact Us
+                  Contact
                 </Link>
               </div>
 
               {/* Right: CTA Actions & Mobile Toggle */}
               <div className="flex items-center justify-end shrink-0 gap-2 h-full">
-                {/* Desktop Auth Buttons (Only visible > 730px) */}
-                <div className="hidden min-[731px]:flex items-center gap-2 h-full">
+                {/* Desktop Auth Buttons (Only visible > 1024px due to space) */}
+                <div className="hidden lg:flex items-center gap-2 h-full">
                   {user ? (
-                    <div className="flex items-center gap-2">
-                      <Link
-                        href={`/${user.role}/dashboard`}
-                        className="flex items-center gap-2 rounded-lg py-2 px-2 hover:bg-blue-100 transition-colors"
+                    <div className="flex items-center gap-4 h-full">
+                      {!isDashboardPage && (
+                        <Link href="/profile" className="flex items-center gap-1.5 text-xs uppercase tracking-widest font-black text-slate-700 hover:text-blue-600 transition-colors">
+                          <User size={16} /> Profile
+                        </Link>
+                      )}
+                      <button 
+                        onClick={handleLogout} 
+                        className="flex items-center gap-2 rounded-lg py-1.5 px-3 bg-red-50 text-red-600 hover:bg-red-100 transition-colors cursor-pointer duration-300"
                       >
-                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-200 text-blue-700">
-                          <LayoutDashboard size={18} />
-                        </div>
-                        <span className="hidden sm:inline text-xs uppercase tracking-widest font-black">
-                          Dashboard
+                        <X size={16} />
+                        <span className="text-xs uppercase tracking-widest font-black">
+                          Logout
                         </span>
-                      </Link>
-                      <Link
-                        href="/profile"
-                        className="flex items-center gap-2 rounded-lg py-2 px-2 hover:bg-blue-100 transition-colors"
-                      >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-200 text-blue-700">
-                          <User size={18} />
-                        </div>
-                        <span className="hidden sm:inline text-xs uppercase tracking-widest font-black">
-                          Profile
-                        </span>
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors px-2"
-                      >
-                        Logout
                       </button>
                     </div>
                   ) : (
@@ -119,10 +124,10 @@ export default function Navbar() {
                   )}
                 </div>
 
-                {/* Mobile Hamburger Button (Only visible <= 730px) */}
+                {/* Mobile Hamburger Button (Only visible < lg) */}
                 <button 
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="min-[731px]:hidden p-2 text-slate-700 hover:text-orange-600 transition-colors"
+                  className="lg:hidden p-2 text-slate-700 hover:text-orange-600 transition-colors"
                 >
                   {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
                 </button>
@@ -132,40 +137,40 @@ export default function Navbar() {
 
           {/* Mobile Overlay Menu */}
           {isMenuOpen && (
-            <div className="min-[731px]:hidden bg-blue-50 border-t border-blue-200 shadow-2xl animate-in slide-in-from-top duration-300">
+            <div className="lg:hidden bg-blue-50 border-t border-blue-200 shadow-2xl animate-in slide-in-from-top duration-300 relative z-[100]">
               <div className="flex flex-col p-4 gap-2">
                 <Link 
                   href="/#home" 
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all block w-full text-left"
                 >
                   Home
                 </Link>
                 <Link 
                   href="/explore" 
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all block w-full text-left"
                 >
                   Explore
                 </Link>
                 <Link 
                   href="/#how-it-works" 
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all block w-full text-left"
                 >
                   How it Works
                 </Link>
                 <Link 
                   href="/#about" 
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all block w-full text-left"
                 >
                   About Us
                 </Link>
                 <Link 
                   href="/contact" 
                   onClick={() => setIsMenuOpen(false)}
-                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                  className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all block w-full text-left"
                 >
                   Contact Us
                 </Link>
@@ -177,27 +182,29 @@ export default function Navbar() {
                       <Link
                         href={`/${user.role}/dashboard`}
                         onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
+                        className="flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all w-full text-left"
                       >
-                        <LayoutDashboard size={18} className="text-blue-500" />
+                        <LayoutDashboard size={18} className="text-blue-500 shrink-0" />
                         Dashboard
                       </Link>
-                      <Link
-                        href="/profile"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all"
-                      >
-                        <User size={18} className="text-blue-500" />
-                        Profile
-                      </Link>
+                      {!isDashboardPage && (
+                        <Link
+                          href="/profile"
+                          onClick={() => setIsMenuOpen(false)}
+                          className="flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all w-full text-left"
+                        >
+                          <User size={18} className="text-blue-500 shrink-0" />
+                          Profile
+                        </Link>
+                      )}
                       <button 
                         onClick={() => {
                           handleLogout();
                           setIsMenuOpen(false);
                         }}
-                        className="w-full flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                        className="w-full flex items-center gap-4 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-red-600 hover:bg-red-50 rounded-lg transition-all text-left"
                       >
-                         <X size={18} />
+                         <X size={18} className="shrink-0" />
                          Logout
                       </button>
                     </>

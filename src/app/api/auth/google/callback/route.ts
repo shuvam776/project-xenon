@@ -145,8 +145,14 @@ export async function GET(req: NextRequest) {
             path: '/',
         });
 
-        // Redirect to home page with success
-        return NextResponse.redirect(new URL('/?auth=success', req.url));
+        // Redirect to user dashboard
+        let dashUrl = '/buyer/dashboard';
+        if (user.role === 'vendor') {
+            dashUrl = '/vendor/dashboard';
+        } else if (user.role === 'admin') {
+            dashUrl = '/admin';
+        }
+        return NextResponse.redirect(new URL(dashUrl, req.url));
     } catch (error) {
         console.error('Google OAuth callback error:', error);
         return NextResponse.redirect(new URL('/?auth=error', req.url));

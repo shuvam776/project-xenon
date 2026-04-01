@@ -45,6 +45,44 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid date range" }, { status: 400 });
     }
 
+    // Check for overlapping confirmed bookings
+    const overlap = await Booking.findOne({
+      hoarding: hoardingId,
+      status: 'confirmed',
+      $or: [
+        { startDate: { $lte: end }, endDate: { $gte: start } }
+      ]
+    });
+    if (overlap) {
+      return NextResponse.json({ error: "Selected dates are already booked." }, { status: 400 });
+    }
+
+    // Check for manual blocks in hoarding collection
+    if (hoarding.availability?.blockedDates) {
+      const isBlocked = hoarding.availability.blockedDates.some((block: any) => {
+        const bStart = new Date(block.startDate);
+        const bEnd = new Date(block.endDate);
+        return bStart <= end && bEnd >= start;
+      });
+      if (isBlocked) {
+        return NextResponse.json({ error: "Selected dates are unavailable/blocked by vendor." }, { status: 400 });
+      }
+    }
+
+    // Optional: Check for recently created pending bookings to avoid race conditions
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    const recentPending = await Booking.findOne({
+      hoarding: hoardingId,
+      status: 'pending',
+      createdAt: { $gte: tenMinutesAgo },
+      $or: [
+        { startDate: { $lte: end }, endDate: { $gte: start } }
+      ]
+    });
+    if (recentPending) {
+       return NextResponse.json({ error: "Selected dates are temporarily held for another user's checkout. Try again in 10 minutes." }, { status: 400 });
+    }
+
     const vendorBaseAmount = Math.ceil((hoarding.pricePerMonth / 30) * diffDays);
     const commission = vendorBaseAmount * 0.20;
     const subtotal = vendorBaseAmount + commission;
