@@ -73,7 +73,52 @@ export async function POST(req: Request) {
       type: "chat",
     });
 
-    return NextResponse.json({ message: "Sent", data: newMessage });
+    const populatedMessage = await Message.findById(newMessage._id)
+      .populate("sender", "name email role")
+      .populate("receiver", "name email role");
+
+    return NextResponse.json({ message: "Sent", data: populatedMessage });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("accessToken")?.value;
+
+    const decoded = verifyAccessToken(token as string);
+    if (!decoded) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    const { messageIds, markAllFromAdmin = false } = await req.json();
+
+    await dbConnect();
+
+    const admins = await User.find({ role: "admin" }).select("_id");
+    const adminIds = admins.map((admin) => admin._id);
+
+    const query: Record<string, unknown> = {
+      receiver: decoded.userId,
+      status: "unread",
+    };
+
+    if (Array.isArray(messageIds) && messageIds.length > 0) {
+      query._id = { $in: messageIds };
+    } else if (markAllFromAdmin) {
+      query.sender = { $in: adminIds };
+    } else {
+      return NextResponse.json(
+        { error: "messageIds or markAllFromAdmin is required" },
+        { status: 400 },
+      );
+    }
+
+    await Message.updateMany(query, { $set: { status: "read" } });
+
+    return NextResponse.json({ message: "Messages marked as read" });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

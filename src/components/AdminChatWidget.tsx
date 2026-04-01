@@ -1,245 +1,452 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, Send, User, Bot } from "lucide-react";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
-interface ChatMessage {
-  id: number;
+interface WidgetMessage {
+  id: string;
   text: string;
   sender: "user" | "admin" | "bot";
   time: string;
+  isUnread?: boolean;
 }
+
+interface AuthUser {
+  id: string;
+  role: string;
+  name: string;
+}
+
+interface ApiMessageParty {
+  _id: string;
+  role?: string;
+  name?: string;
+}
+
+interface ApiMessage {
+  _id: string;
+  content: string;
+  createdAt: string;
+  status: "unread" | "read" | "archived";
+  sender?: string | ApiMessageParty | null;
+  receiver?: string | ApiMessageParty | null;
+}
+
+const formatChatTime = (date: Date) =>
+  new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
 
 export default function AdminChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"admin" | "bot">("admin");
   const [messageInput, setMessageInput] = useState("");
-  
-  const [adminMessages, setAdminMessages] = useState<ChatMessage[]>([
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [adminMessages, setAdminMessages] = useState<WidgetMessage[]>([]);
+  const [adminChatLoading, setAdminChatLoading] = useState(false);
+  const [adminChatError, setAdminChatError] = useState<string | null>(null);
+  const [botMessages, setBotMessages] = useState<WidgetMessage[]>([
     {
-      id: 1,
-      text: "Hi there! 👋 Welcome to HoardSpace. How can we help you with your advertising needs?",
-      sender: "admin",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }
-  ]);
-  
-  const [botMessages, setBotMessages] = useState<ChatMessage[]>([
-    {
-      id: 1,
-      text: "Hello! I am the HoardSpace AI Assistant 🤖. Ask me anything about our features, like how to book a billboard, list your space, or check pricing!",
+      id: "bot-welcome",
+      text: "Hello! I am the HoardSpace AI Assistant. Ask me about booking, listing, pricing, or platform features.",
       sender: "bot",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }
+      time: formatChatTime(new Date()),
+    },
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [adminMessages, botMessages, isOpen, activeTab]);
 
-  // Local Rule-Based "AI" Logic
-  const getBotResponse = (input: string): string => {
-    const text = input.toLowerCase();
-    
-    if (text.includes("book") || text.includes("rent") || text.includes("buy")) {
-      return "To book a hoarding, head over to the 'Explore' tab! You can search by city, choose your dates on the calendar, and securely checkout.";
-    }
-    if (text.includes("price") || text.includes("cost") || text.includes("expensive")) {
-      return "Hoarding prices depend on the location, size, and type of board (e.g., Lit vs. Non-Lit). We offer transparent pricing directly on each listing.";
-    }
-    if (text.includes("vendor") || text.includes("list") || text.includes("sell") || text.includes("owner")) {
-      return "Are you a hoarding owner? You can list your space with us! Register as a Vendor to start uploading your billboards and managing bookings via your custom dashboard.";
-    }
-    if (text.includes("payment") || text.includes("secure") || text.includes("razorpay")) {
-      return "All bookings are processed securely via Razorpay. We support Credit/Debit cards, UPI, and NetBanking.";
-    }
-    if (text.includes("dashboard") || text.includes("profile")) {
-      return "Your personalized Dashboard allows you to manage active campaigns, view past bookings, chat with support, and browse your wishlist!";
-    }
-    if (text.includes("hi") || text.includes("hello") || text.includes("hey")) {
-      return "Hello! I am the HoardSpace AI Assistant. I can answer questions about finding billboards, pricing, and how our platform works.";
-    }
-    
-    return "I'm not exactly sure how to answer that! 😅 I'm best at answering questions about booking spaces, listing as a vendor, pricing, or our features. Could you rephrase?";
+  useEffect(() => {
+    let isCancelled = false;
+
+    const loadAuthUser = async () => {
+      try {
+        const res = await fetchWithAuth("/api/auth/me");
+        if (!res.ok) {
+          if (!isCancelled) {
+            setAuthUser(null);
+          }
+          return;
+        }
+
+        const data = await res.json();
+        if (!isCancelled) {
+          setAuthUser(data.user ?? null);
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          setAuthUser(null);
+        }
+      }
+    };
+
+    loadAuthUser();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  const canUseAdminChat =
+    authUser?.role === "buyer" || authUser?.role === "vendor";
+
+  const mapApiMessageToWidgetMessage = (message: ApiMessage): WidgetMessage => {
+    const senderId =
+      typeof message.sender === "string" ? message.sender : message.sender?._id;
+    const senderRole =
+      typeof message.sender === "string" ? undefined : message.sender?.role;
+    const isOwnMessage = senderId === authUser?.id;
+
+    return {
+      id: message._id,
+      text: message.content,
+      sender: isOwnMessage || senderRole !== "admin" ? "user" : "admin",
+      time: formatChatTime(new Date(message.createdAt)),
+      isUnread:
+        !isOwnMessage &&
+        senderRole === "admin" &&
+        message.status === "unread",
+    };
   };
 
-  const handleSendMessage = (e?: React.FormEvent) => {
+  const fetchAdminThread = async () => {
+    if (!canUseAdminChat) {
+      setAdminMessages([]);
+      return;
+    }
+
+    setAdminChatLoading(true);
+    try {
+      const res = await fetchWithAuth("/api/messages");
+      if (!res.ok) {
+        throw new Error("Failed to fetch support messages");
+      }
+
+      const data = await res.json();
+      setAdminMessages(
+        (data.messages || []).map((message: ApiMessage) =>
+          mapApiMessageToWidgetMessage(message),
+        ),
+      );
+      setAdminChatError(null);
+    } catch (error) {
+      setAdminChatError("Could not load support chat right now.");
+    } finally {
+      setAdminChatLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!canUseAdminChat) {
+      return;
+    }
+
+    fetchAdminThread();
+
+    const interval = setInterval(() => {
+      fetchAdminThread();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [canUseAdminChat]);
+
+  const getBotResponse = (input: string): string => {
+    const text = input.toLowerCase();
+
+    if (text.includes("book") || text.includes("rent") || text.includes("buy")) {
+      return "To book a hoarding, head over to the Explore tab, select your dates, and complete checkout.";
+    }
+    if (text.includes("price") || text.includes("cost")) {
+      return "Pricing depends on location, board size, and lighting type. Every listing shows its current rate clearly.";
+    }
+    if (text.includes("vendor") || text.includes("list") || text.includes("owner")) {
+      return "You can register as a vendor and list your hoardings from the vendor dashboard.";
+    }
+    if (text.includes("payment") || text.includes("secure") || text.includes("razorpay")) {
+      return "Bookings are processed securely through Razorpay with cards, UPI, and net banking.";
+    }
+    if (text.includes("dashboard") || text.includes("profile")) {
+      return "Your dashboard helps you manage bookings, messages, and saved items from one place.";
+    }
+    if (text.includes("hi") || text.includes("hello") || text.includes("hey")) {
+      return "Hello! I can help with booking, pricing, listings, and general platform questions.";
+    }
+
+    return "I am best at answering questions about booking spaces, vendor listings, pricing, and platform features. Try rephrasing that for me.";
+  };
+
+  const handleSendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!messageInput.trim()) return;
 
-    const newMsg: ChatMessage = {
-      id: Date.now(),
+    if (activeTab === "admin") {
+      if (!canUseAdminChat || adminChatLoading) return;
+
+      const content = messageInput.trim();
+      setMessageInput("");
+
+      try {
+        const res = await fetchWithAuth("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to send support message");
+        }
+
+        const data = await res.json();
+        setAdminMessages((prev) => [
+          ...prev,
+          mapApiMessageToWidgetMessage(data.data as ApiMessage),
+        ]);
+        setAdminChatError(null);
+      } catch (error) {
+        setMessageInput(content);
+        setAdminChatError("Could not send your message. Please try again.");
+      }
+      return;
+    }
+
+    const newMsg: WidgetMessage = {
+      id: `bot-user-${Date.now()}`,
       text: messageInput.trim(),
       sender: "user",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      time: formatChatTime(new Date()),
     };
 
-    if (activeTab === "admin") {
-      setAdminMessages([...adminMessages, newMsg]);
-      setMessageInput("");
+    setBotMessages((prev) => [...prev, newMsg]);
+    setMessageInput("");
 
-      // Simulate admin typing
-      setTimeout(() => {
-        setAdminMessages(prev => [...prev, {
-          id: Date.now() + 1,
-          text: "Thanks for reaching out! One of our human agents will review your message shortly.",
-          sender: "admin",
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }]);
-      }, 1500);
-    } else {
-      setBotMessages([...botMessages, newMsg]);
-      setMessageInput("");
-
-      // Simulate Bot processing (faster than human)
-      setTimeout(() => {
-        const botReply = getBotResponse(newMsg.text);
-        setBotMessages(prev => [...prev, {
-          id: Date.now() + 1,
+    setTimeout(() => {
+      const botReply = getBotResponse(newMsg.text);
+      setBotMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-reply-${Date.now()}`,
           text: botReply,
           sender: "bot",
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }]);
-      }, 600);
-    }
+          time: formatChatTime(new Date()),
+        },
+      ]);
+    }, 600);
   };
 
-  const currentMessages = activeTab === "admin" ? adminMessages : botMessages;
+  const currentMessages =
+    activeTab === "admin" ? adminMessages : botMessages;
 
   return (
     <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
-      {/* Chat Window */}
-      <div 
-        className={`mb-4 w-80 sm:w-96 bg-[#efeae2] shadow-[0_20px_50px_rgba(0,0,0,0.25)] rounded-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${
-          isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-50 opacity-0 pointer-events-none translate-y-10"
-        }`}
-        style={{ height: "480px", fontFamily: "system-ui, -apple-system, sans-serif" }}
-      >
-        {/* WhatsApp-Style Header */}
-        <div className="bg-[#0f4a8a] text-white pt-3 pb-0 flex flex-col shrink-0 shadow-md z-10 w-full relative">
-          <div className="flex items-center justify-between px-4 pb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-all">
-                {activeTab === "admin" ? <User size={20} className="text-white" /> : <Bot size={20} className="text-white" />}
-              </div>
-              <div>
-                <h3 className="font-semibold text-[15px] leading-tight">
-                  {activeTab === "admin" ? "HoardSpace Support" : "AI Help Desk"}
-                </h3>
-                <p className="text-[12px] text-blue-100 opacity-90 mt-0.5 font-medium tracking-wide">
-                  {activeTab === "admin" ? "Typically replies instantly" : "Automated bot responses"}
-                </p>
-              </div>
-            </div>
-            <button 
-              onClick={() => setIsOpen(false)}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors self-start"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          
-          {/* Tabs */}
-          <div className="flex w-full bg-[#0a325a]">
-            <button 
-              onClick={() => setActiveTab("admin")}
-              className={`flex-1 py-2 text-[13px] font-bold uppercase tracking-wider transition-colors border-b-[3px] ${activeTab === "admin" ? "text-orange-400 border-orange-400" : "text-white/60 border-transparent hover:text-white/80"}`}
-            >
-              Admin Chat
-            </button>
-            <button 
-              onClick={() => setActiveTab("bot")}
-              className={`flex-1 py-2 text-[13px] font-bold uppercase tracking-wider transition-colors border-b-[3px] ${activeTab === "bot" ? "text-orange-400 border-orange-400" : "text-white/60 border-transparent hover:text-white/80"}`}
-            >
-              AI Help Desk
-            </button>
-          </div>
-        </div>
-
-        {/* Message Area */}
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 relative">
-          {/* Subtle background doodle similar to WhatsApp */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-repeat" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"20\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M0 0h20v20H0z\" fill=\"%23000\"/%3E%3Ccircle cx=\"10\" cy=\"10\" r=\"1.5\" fill=\"%23000\"/%3E%3C/svg%3E')", backgroundSize: "20px" }}></div>
-          
-          <div className="text-center mb-4">
-            <span className="text-[11px] font-medium bg-[#e4e2dd] text-gray-600 px-3 py-1 rounded-lg">Today</span>
-          </div>
-
-          {currentMessages.map((msg) => (
-            <div 
-              key={msg.id} 
-              className={`flex flex-col max-w-[85%] relative z-10 mb-1 ${msg.sender === "user" ? "self-end items-end" : "self-start items-start"}`}
-            >
-              <div 
-                className={`px-3 pt-2 pb-1.5 rounded-lg shadow-sm relative break-words ${
-                  msg.sender === "user" 
-                    ? "bg-[#dbeafe] text-[#111b21] rounded-tr-[4px]" // Blue-100 for outgoing
-                    : "bg-white text-[#111b21] rounded-tl-[4px]" // White for incoming
-                }`}
-              >
-                {/* Visual tail (CSS triangle) */}
-                <div 
-                  className="absolute top-0 w-0 h-0 border-[6px]"
-                  style={{ 
-                    borderColor: msg.sender === "user" 
-                      ? "#dbeafe transparent transparent transparent" 
-                      : "#ffffff transparent transparent transparent",
-                    right: msg.sender === "user" ? "-6px" : "auto",
-                    left: msg.sender === "user" ? "auto" : "-6px",
-                  }}
-                ></div>
-
-                <p className="text-[14px] leading-snug">{msg.text}</p>
-                <div className="text-[10px] text-gray-500 float-right mt-1 ml-4 relative -bottom-[2px]">
-                  {msg.time}
-                  {msg.sender === "user" && (
-                     <span className="ml-[3px] text-blue-500 inline-block font-bold">✓✓</span>
+      {isOpen && (
+        <div
+          className="mb-4 flex h-[480px] w-80 flex-col overflow-hidden rounded-2xl bg-[#efeae2] shadow-[0_20px_50px_rgba(0,0,0,0.25)] sm:w-96"
+          style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+        >
+          <div className="relative z-10 flex w-full shrink-0 flex-col bg-[#0f4a8a] pb-0 pt-3 text-white shadow-md">
+            <div className="flex items-center justify-between px-4 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20">
+                  {activeTab === "admin" ? (
+                    <User size={20} className="text-white" />
+                  ) : (
+                    <Bot size={20} className="text-white" />
                   )}
                 </div>
+                <div>
+                  <h3 className="text-[15px] font-semibold leading-tight">
+                    {activeTab === "admin" ? "HoardSpace Support" : "AI Help Desk"}
+                  </h3>
+                  <p className="mt-0.5 text-[12px] font-medium tracking-wide text-blue-100 opacity-90">
+                    {activeTab === "admin"
+                      ? canUseAdminChat
+                        ? "Replies from the admin team"
+                        : "Login as buyer/vendor to message support"
+                      : "Automated bot responses"}
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="self-start rounded-full p-2 transition-colors hover:bg-white/10"
+              >
+                <X size={20} />
+              </button>
             </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
 
-        {/* Input Area */}
-        <div className="p-3 bg-[#f0f2f5] shrink-0 border-t border-gray-200">
-          <form 
-            onSubmit={handleSendMessage}
-            className="flex items-center gap-2"
-          >
-            <input 
-              type="text"
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              placeholder="Type a message"
-              className="flex-1 bg-white rounded-full px-5 py-3 outline-none text-[15px] shadow-sm text-gray-800 placeholder:text-gray-500 border border-transparent focus:border-blue-100 transition-colors"
-            />
-            <button 
-              type="submit"
-              disabled={!messageInput.trim()}
-              className="w-[46px] h-[46px] bg-[#f97316] hover:bg-[#ea580c] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-full flex items-center justify-center text-white transition-colors shadow-sm shrink-0"
-            >
-              <Send size={18} className="translate-x-[2px]" />
-            </button>
-          </form>
-        </div>
-      </div>
+            <div className="flex w-full bg-[#0a325a]">
+              <button
+                onClick={() => setActiveTab("admin")}
+                className={`flex-1 border-b-[3px] py-2 text-[13px] font-bold uppercase tracking-wider transition-colors ${
+                  activeTab === "admin"
+                    ? "border-orange-400 text-orange-400"
+                    : "border-transparent text-white/60 hover:text-white/80"
+                }`}
+              >
+                Admin Chat
+              </button>
+              <button
+                onClick={() => setActiveTab("bot")}
+                className={`flex-1 border-b-[3px] py-2 text-[13px] font-bold uppercase tracking-wider transition-colors ${
+                  activeTab === "bot"
+                    ? "border-orange-400 text-orange-400"
+                    : "border-transparent text-white/60 hover:text-white/80"
+                }`}
+              >
+                AI Help Desk
+              </button>
+            </div>
+          </div>
 
-      {/* Floating Widget Button */}
+          <div className="relative flex flex-1 flex-col gap-2 overflow-y-auto p-4">
+            <div
+              className="pointer-events-none absolute inset-0 bg-repeat opacity-[0.03]"
+              style={{
+                backgroundImage:
+                  "url('data:image/svg+xml,%3Csvg width=\"20\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M0 0h20v20H0z\" fill=\"%23000\"/%3E%3Ccircle cx=\"10\" cy=\"10\" r=\"1.5\" fill=\"%23000\"/%3E%3C/svg%3E')",
+                backgroundSize: "20px",
+              }}
+            ></div>
+
+            <div className="mb-4 text-center">
+              <span className="rounded-lg bg-[#e4e2dd] px-3 py-1 text-[11px] font-medium text-gray-600">
+                Today
+              </span>
+            </div>
+
+            {activeTab === "admin" &&
+              adminChatLoading &&
+              currentMessages.length === 0 && (
+                <div className="relative z-10 text-center text-sm text-gray-500">
+                  Loading support chat...
+                </div>
+              )}
+
+            {activeTab === "admin" && adminChatError && (
+              <div className="relative z-10 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {adminChatError}
+              </div>
+            )}
+
+            {activeTab === "admin" && !canUseAdminChat && (
+              <div className="relative z-10 rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-700">
+                Sign in as a buyer or vendor to chat with the admin team here.
+              </div>
+            )}
+
+            {activeTab === "admin" &&
+              canUseAdminChat &&
+              currentMessages.length === 0 &&
+              !adminChatLoading && (
+                <div className="relative z-10 text-center text-sm text-gray-500">
+                  Start a conversation with the admin team.
+                </div>
+              )}
+
+            {currentMessages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`relative z-10 mb-1 flex max-w-[85%] flex-col ${
+                  msg.sender === "user"
+                    ? "self-end items-end"
+                    : "self-start items-start"
+                }`}
+              >
+                <div
+                  className={`relative break-words rounded-lg px-3 pb-1.5 pt-2 shadow-sm ${
+                    msg.sender === "user"
+                      ? "rounded-tr-[4px] bg-[#dbeafe] text-[#111b21]"
+                      : "rounded-tl-[4px] bg-white text-[#111b21]"
+                  }`}
+                >
+                  <div
+                    className="absolute top-0 h-0 w-0 border-[6px]"
+                    style={{
+                      borderColor:
+                        msg.sender === "user"
+                          ? "#dbeafe transparent transparent transparent"
+                          : "#ffffff transparent transparent transparent",
+                      right: msg.sender === "user" ? "-6px" : "auto",
+                      left: msg.sender === "user" ? "auto" : "-6px",
+                    }}
+                  ></div>
+
+                  <p className="text-[14px] leading-snug">{msg.text}</p>
+                  <div className="relative -bottom-[2px] float-right ml-4 mt-1 text-[10px] text-gray-500">
+                    {msg.time}
+                    {msg.sender === "user" && (
+                      <span className="ml-[3px] inline-block font-bold text-blue-500">
+                        ✓✓
+                      </span>
+                    )}
+                    {msg.sender === "admin" && msg.isUnread && (
+                      <span className="ml-[4px] inline-block h-2 w-2 rounded-full bg-orange-500"></span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className="shrink-0 border-t border-gray-200 bg-[#f0f2f5] p-3">
+            <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+              <input
+                type="text"
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                placeholder={
+                  activeTab === "admin" && !canUseAdminChat
+                    ? "Login required for admin chat"
+                    : "Type a message"
+                }
+                disabled={activeTab === "admin" && !canUseAdminChat}
+                className="flex-1 rounded-full border border-transparent bg-white px-5 py-3 text-[15px] text-gray-800 shadow-sm outline-none transition-colors placeholder:text-gray-500 focus:border-blue-100"
+              />
+              <button
+                type="submit"
+                disabled={
+                  !messageInput.trim() ||
+                  (activeTab === "admin" && !canUseAdminChat)
+                }
+                className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-[#f97316] text-white shadow-sm transition-colors hover:bg-[#ea580c] disabled:cursor-not-allowed disabled:bg-gray-400"
+              >
+                <Send size={18} className="translate-x-[2px]" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 bg-[#0f4a8a] text-white hover:bg-[#1e3a8a] rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 relative z-50 hover:shadow-[0_10px_25px_rgba(15,74,138,0.5)] ${isOpen ? "rotate-90 scale-90" : "scale-100 hover:-translate-y-1"}`}
+        className={`relative z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#0f4a8a] text-white shadow-2xl transition-all duration-300 hover:bg-[#1e3a8a] hover:shadow-[0_10px_25px_rgba(15,74,138,0.5)] ${
+          isOpen ? "rotate-90 scale-90" : "scale-100 hover:-translate-y-1"
+        }`}
       >
-        <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-[#f97316] rounded-full border-2 border-white shadow-sm"></span>
-        <div className="relative flex items-center justify-center w-full h-full">
-          <MessageCircle size={28} className={`absolute transition-opacity duration-300 ${isOpen ? "opacity-0" : "opacity-100"}`} />
-          <X size={28} className={`absolute transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`} />
+        <span className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#f97316] shadow-sm"></span>
+        <div className="relative flex h-full w-full items-center justify-center">
+          <MessageCircle
+            size={28}
+            className={`absolute transition-opacity duration-300 ${
+              isOpen ? "opacity-0" : "opacity-100"
+            }`}
+          />
+          <X
+            size={28}
+            className={`absolute transition-opacity duration-300 ${
+              isOpen ? "opacity-100" : "opacity-0"
+            }`}
+          />
         </div>
       </button>
     </div>

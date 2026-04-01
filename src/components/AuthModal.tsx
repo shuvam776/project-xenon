@@ -294,7 +294,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         if (userRole === "vendor") {
           window.location.href = "/vendor/dashboard";
         } else if (userRole === "admin") {
-          window.location.href = "/admin";
+          window.location.href = "/";
         } else {
           window.location.href = "/buyer/dashboard";
         }
@@ -400,7 +400,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       if (userRole === "vendor") {
         window.location.href = "/vendor/dashboard";
       } else if (userRole === "admin") {
-        window.location.href = "/admin";
+        window.location.href = "/";
       } else {
         window.location.href = "/buyer/dashboard";
       }

@@ -72,6 +72,7 @@ type TabType = "overview" | "campaigns" | "wishlist" | "chat";
 
 interface UserData {
   _id: string;
+  id?: string;
   name: string;
   role: string;
   email?: string;
@@ -92,9 +93,18 @@ interface WishlistItem {
 
 interface ChatMessage {
   _id: string;
-  sender: string;
+  sender?: string | { _id: string; role?: string; name?: string } | null;
+  receiver?: string | { _id: string; role?: string; name?: string } | null;
   content: string;
+  status?: "unread" | "read" | "archived";
   createdAt?: string;
+}
+
+interface NotificationItem {
+  id: string;
+  text: string;
+  timestamp: string;
+  isRead: boolean;
 }
 
 export default function BuyerDashboard() {
@@ -119,27 +129,78 @@ export default function BuyerDashboard() {
   const [chatMessage, setChatMessage] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: "Your booking for 'Patia Square Billboard' is confirmed!", type: "confirmation", isRead: false, isRemoving: false, timestamp: "2 hours ago" },
-    { id: 2, text: "Admin: New premium locations are now available for booking in Cuttack.", type: "admin", isRead: false, isRemoving: false, timestamp: "Yesterday" }
-  ]);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => !n.isRead ? { ...n, isRemoving: true } : n));
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.isRead));
-    }, 300);
+  const getMessageParty = (
+    party?: string | { _id: string; role?: string; name?: string } | null,
+  ) => (typeof party === "string" ? { _id: party } : party);
+  const currentUserId = user?._id || user?.id;
+
+  const adminNotifications: NotificationItem[] = messages
+    .filter((msg) => {
+      const sender = getMessageParty(msg.sender);
+      const receiver = getMessageParty(msg.receiver);
+      return (
+        sender?.role === "admin" &&
+        receiver?._id === currentUserId &&
+        msg.status !== "archived"
+      );
+    })
+    .slice()
+    .reverse()
+    .map((msg) => ({
+      id: msg._id,
+      text: msg.content,
+      timestamp: msg.createdAt
+        ? new Date(msg.createdAt).toLocaleString()
+        : "Just now",
+      isRead: msg.status === "read",
+    }));
+
+  const unreadCount = adminNotifications.filter((n) => !n.isRead).length;
+
+  const markRead = async (id: string) => {
+    try {
+      const res = await fetchWithAuth("/api/messages", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messageIds: [id] }),
+      });
+
+      if (res.ok) {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === id ? { ...msg, status: "read" } : msg,
+          ),
+        );
+      }
+    } catch (error) {
+      console.error("Failed to mark notification as read", error);
+    }
   };
 
-  const markRead = (id: number) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, isRemoving: true } : n));
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id));
-    }, 300);
-  };
+  const markAllAsRead = async () => {
+    try {
+      const res = await fetchWithAuth("/api/messages", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ markAllFromAdmin: true }),
+      });
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+      if (res.ok) {
+        setMessages((prev) =>
+          prev.map((msg) => {
+            const sender = getMessageParty(msg.sender);
+            return sender?.role === "admin"
+              ? { ...msg, status: "read" }
+              : msg;
+          }),
+        );
+      }
+    } catch (error) {
+      console.error("Failed to mark all notifications as read", error);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -388,11 +449,11 @@ export default function BuyerDashboard() {
                     )}
                   </div>
                   <div className="max-h-[300px] overflow-y-auto">
-                    {notifications.length > 0 ? (
-                      notifications.map((notif) => (
+                    {adminNotifications.length > 0 ? (
+                      adminNotifications.map((notif) => (
                         <div 
                           key={notif.id}
-                          className={`px-5 py-4 hover:bg-gray-50 border-l-4 transition-all duration-300 cursor-pointer group relative ${notif.isRemoving ? 'opacity-0 -translate-x-8 scale-95 border-transparent' : notif.isRead ? 'border-transparent opacity-60' : 'border-blue-500 bg-blue-50/5'}`}
+                          className={`group relative cursor-pointer border-l-4 px-5 py-4 transition-all duration-300 hover:bg-gray-50 ${notif.isRead ? 'border-transparent opacity-60' : 'border-blue-500 bg-blue-50/5'}`}
                         >
                           <p className={`text-xs font-bold leading-tight ${notif.isRead ? 'text-gray-500' : 'text-gray-900'}`}>
                             {notif.text}
@@ -418,7 +479,7 @@ export default function BuyerDashboard() {
                       </div>
                     )}
                   </div>
-                  {notifications.length > 0 && unreadCount > 0 && (
+                  {adminNotifications.length > 0 && unreadCount > 0 && (
                     <div className="mt-2 px-5 pt-3 border-t border-gray-50">
                       <button 
                         onClick={markAllAsRead}
@@ -701,12 +762,12 @@ export default function BuyerDashboard() {
                   <div
                     key={i}
                     className={`flex ${
-                      msg.sender === user?._id ? "justify-end" : "justify-start"
+                      getMessageParty(msg.sender)?._id === currentUserId ? "justify-end" : "justify-start"
                     }`}
                   >
                     <div
                       className={`max-w-[70%] p-6 rounded-[28px] ${
-                        msg.sender === user?._id
+                        getMessageParty(msg.sender)?._id === currentUserId
                           ? "bg-blue-600 text-white shadow-xl shadow-blue-50 rounded-tr-none"
                           : "bg-white text-gray-700 shadow-sm border border-gray-100 rounded-tl-none font-medium text-sm"
                       }`}

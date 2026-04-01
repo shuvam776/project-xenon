@@ -150,7 +150,7 @@ export async function GET(req: NextRequest) {
         if (user.role === 'vendor') {
             dashUrl = '/vendor/dashboard';
         } else if (user.role === 'admin') {
-            dashUrl = '/admin';
+            dashUrl = '/';
         }
         return NextResponse.redirect(new URL(dashUrl, req.url));
     } catch (error) {

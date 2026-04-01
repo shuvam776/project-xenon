@@ -63,18 +63,22 @@ export async function POST(req: Request) {
     }
 
     await dbConnect();
-    const { receiver, content, type = "chat", status = "read" } = await req.json();
+    const { receiver, content, type = "chat", status = "unread" } = await req.json();
 
     const newMessage = await Message.create({
       sender: decoded.userId,
       receiver,
       content,
       type,
-      status, // Admin's own message is read
+      status,
     });
 
+    const populatedMessage = await Message.findById(newMessage._id)
+      .populate("sender", "name email role")
+      .populate("receiver", "name email role");
+
     return NextResponse.json(
-      { message: "Reply sent", data: newMessage },
+      { message: "Reply sent", data: populatedMessage },
       { status: 201 },
     );
   } catch (error: any) {

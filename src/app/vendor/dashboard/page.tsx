@@ -108,27 +108,78 @@ export default function VendorDashboard() {
   const [showMap, setShowMap] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: "Incoming inquiry for 'KIIT Square Billboard'.", type: "inquiry", isRead: false, isRemoving: false, timestamp: "1 hour ago" },
-    { id: 2, text: "Admin: Your documentation for 'Patia' has been verified.", type: "admin", isRead: false, isRemoving: false, timestamp: "3 hours ago" }
-  ]);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => !n.isRead ? { ...n, isRemoving: true } : n));
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.isRead));
-    }, 300);
+  const getMessageParty = (
+    party?: string | { _id: string; role?: string; name?: string } | null,
+  ) => (typeof party === "string" ? { _id: party } : party);
+  const currentUserId = userData?._id || userData?.id;
+
+  const notifications = messages
+    .filter((msg) => {
+      const sender = getMessageParty(msg.sender);
+      const receiver = getMessageParty(msg.receiver);
+      return (
+        sender?.role === "admin" &&
+        receiver?._id === currentUserId &&
+        msg.status !== "archived"
+      );
+    })
+    .slice()
+    .reverse()
+    .map((msg) => ({
+      id: msg._id,
+      text: msg.content,
+      isRead: msg.status === "read",
+      timestamp: msg.createdAt
+        ? new Date(msg.createdAt).toLocaleString()
+        : "Just now",
+    }));
+
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const markRead = async (id: string) => {
+    try {
+      const res = await fetchWithAuth("/api/messages", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messageIds: [id] }),
+      });
+
+      if (res.ok) {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === id ? { ...msg, status: "read" } : msg,
+          ),
+        );
+      }
+    } catch (error) {
+      console.error("Failed to mark notification as read", error);
+    }
   };
 
-  const markRead = (id: number) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, isRemoving: true } : n));
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id));
-    }, 300);
-  };
+  const markAllAsRead = async () => {
+    try {
+      const res = await fetchWithAuth("/api/messages", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ markAllFromAdmin: true }),
+      });
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+      if (res.ok) {
+        setMessages((prev) =>
+          prev.map((msg) => {
+            const sender = getMessageParty(msg.sender);
+            return sender?.role === "admin"
+              ? { ...msg, status: "read" }
+              : msg;
+          }),
+        );
+      }
+    } catch (error) {
+      console.error("Failed to mark all notifications as read", error);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -475,7 +526,7 @@ export default function VendorDashboard() {
                       notifications.map((notif) => (
                         <div 
                           key={notif.id}
-                          className={`px-5 py-4 hover:bg-gray-50 border-l-4 transition-all duration-300 cursor-pointer group relative ${notif.isRemoving ? 'opacity-0 -translate-x-8 scale-95 border-transparent' : notif.isRead ? 'border-transparent opacity-60' : 'border-blue-500 bg-blue-50/5'}`}
+                          className={`group relative cursor-pointer border-l-4 px-5 py-4 transition-all duration-300 hover:bg-gray-50 ${notif.isRead ? 'border-transparent opacity-60' : 'border-blue-500 bg-blue-50/5'}`}
                         >
                           <p className={`text-xs font-bold leading-tight ${notif.isRead ? 'text-gray-500' : 'text-gray-900'}`}>
                             {notif.text}
@@ -1160,6 +1211,9 @@ function SoldBookings({ bookings }: { bookings: Booking[] }) {
 
 function ChatBox({ messages, onSend, userData, loading }: any) {
   const [msg, setMsg] = useState("");
+  const getMessageSenderId = (sender: any) =>
+    typeof sender === "string" ? sender : sender?._id;
+  const currentUserId = userData?._id || userData?.id;
 
   const handleSend = async () => {
     if (!msg.trim()) return;
@@ -1197,14 +1251,14 @@ function ChatBox({ messages, onSend, userData, loading }: any) {
           </div>
         )}
         {messages.map((chat: any, i: number) => (
-          <div key={i} className={`flex ${chat.sender === userData?._id ? "justify-end" : "justify-start"}`}>
+          <div key={i} className={`flex ${getMessageSenderId(chat.sender) === currentUserId ? "justify-end" : "justify-start"}`}>
             <div className={`max-w-[75%] px-6 py-4 rounded-[24px] text-sm ${
-              chat.sender === userData?._id 
+              getMessageSenderId(chat.sender) === currentUserId 
                 ? "bg-blue-600 text-white rounded-br-none shadow-lg shadow-blue-100" 
                 : "bg-white text-gray-700 border border-gray-100 rounded-bl-none shadow-sm"
             }`}>
               <p className="font-medium leading-relaxed">{chat.content}</p>
-              <p className={`text-[10px] mt-1.5 font-bold uppercase tracking-widest ${chat.sender === userData?._id ? "text-blue-100" : "text-gray-400"}`}>
+              <p className={`text-[10px] mt-1.5 font-bold uppercase tracking-widest ${getMessageSenderId(chat.sender) === currentUserId ? "text-blue-100" : "text-gray-400"}`}>
                 {new Date(chat.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>

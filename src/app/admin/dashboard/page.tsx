@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
-import { normalizeKycStatus, RESETTABLE_KYC_STATUSES } from "@/lib/kycStatus";
+import { normalizeKycStatus } from "@/lib/kycStatus";
 import {
   Users,
   User as UserIcon,
@@ -58,6 +59,17 @@ interface User {
   isPhoneVerified: boolean;
   kycStatus: string;
   createdAt: string;
+}
+
+interface UserDetails extends User {
+  kycDetails?: {
+    companyName?: string;
+    gstin?: string;
+    pan?: string;
+    aadhaar?: string;
+    address?: string;
+    documents?: string[];
+  };
 }
 
 interface Hoarding {
@@ -135,10 +147,13 @@ export default function AdminDashboard() {
   // User details modal
   const [userDetailsModal, setUserDetailsModal] = useState<{
     isOpen: boolean;
-    user: any | null;
+    user: UserDetails | null;
     loading: boolean;
-  }>({ isOpen: false, user: null, loading: false });
+    error: string | null;
+  }>({ isOpen: false, user: null, loading: false, error: null });
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const modalStatus = userDetailsModal.user
     ? normalizeKycStatus(userDetailsModal.user.kycStatus)
     : "not_submitted";
@@ -177,6 +192,10 @@ export default function AdminDashboard() {
   }, [router]);
 
   // Fetch stats
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!authChecked) return;
 
@@ -303,7 +322,7 @@ export default function AdminDashboard() {
       const res = await fetchWithAuth(url);
       if (res.ok) {
         const data = await res.json();
-        setUsers(data.users);
+        setUsers(data.users.filter((user: User) => user.role !== "admin"));
       }
     } catch (error) {
       console.error("Failed to fetch users", error);
@@ -358,6 +377,59 @@ export default function AdminDashboard() {
     bookingStatusFilter,
   ]);
 
+  useEffect(() => {
+    if (!userDetailsModal.isOpen || !selectedUserId) return;
+
+    let isCancelled = false;
+
+    const fetchUserDetails = async () => {
+      setUserDetailsModal((prev) => ({
+        ...prev,
+        loading: true,
+        error: null,
+      }));
+
+      try {
+        const res = await fetchWithAuth(`/api/admin/users/${selectedUserId}/details`);
+
+        if (isCancelled) return;
+
+        if (res.ok) {
+          const data = await res.json();
+          if (isCancelled) return;
+
+          setUserDetailsModal({
+            isOpen: true,
+            user: data.user,
+            loading: false,
+            error: null,
+          });
+          return;
+        }
+
+        setUserDetailsModal((prev) => ({
+          ...prev,
+          loading: false,
+          error: "Failed to load full KYC details. Showing available user info.",
+        }));
+      } catch (error) {
+        if (isCancelled) return;
+
+        setUserDetailsModal((prev) => ({
+          ...prev,
+          loading: false,
+          error: "Failed to load full KYC details. Showing available user info.",
+        }));
+      }
+    };
+
+    fetchUserDetails();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedUserId, userDetailsModal.isOpen]);
+
   const fetchStats = async () => {
     try {
       const res = await fetchWithAuth("/api/admin/stats");
@@ -368,6 +440,16 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Failed to fetch stats", error);
     }
+  };
+
+  const closeUserDetailsModal = () => {
+    setSelectedUserId(null);
+    setUserDetailsModal({
+      isOpen: false,
+      user: null,
+      loading: false,
+      error: null,
+    });
   };
 
   if (loading || !authChecked) {
@@ -389,6 +471,23 @@ export default function AdminDashboard() {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === userId ? { ...user, ...data.user } : user,
+          ),
+        );
+        setUserDetailsModal((prev) =>
+          prev.user && prev.user._id === userId
+            ? {
+                ...prev,
+                user: {
+                  ...prev.user,
+                  ...data.user,
+                },
+              }
+            : prev,
+        );
         await fetchUsers();
         await fetchStats();
       } else {
@@ -462,21 +561,14 @@ export default function AdminDashboard() {
   };
 
   // View user details
-  const handleViewUserDetails = async (userId: string) => {
-    setUserDetailsModal({ isOpen: true, user: null, loading: true });
-    try {
-      const res = await fetchWithAuth(`/api/admin/users/${userId}/details`);
-      if (res.ok) {
-        const data = await res.json();
-        setUserDetailsModal({ isOpen: true, user: data.user, loading: false });
-      } else {
-        alert("Failed to fetch user details");
-        setUserDetailsModal({ isOpen: false, user: null, loading: false });
-      }
-    } catch (error) {
-      alert("Failed to fetch user details");
-      setUserDetailsModal({ isOpen: false, user: null, loading: false });
-    }
+  const handleViewUserDetails = (selectedUser: User) => {
+    setSelectedUserId(selectedUser._id);
+    setUserDetailsModal({
+      isOpen: true,
+      user: selectedUser,
+      loading: false,
+      error: null,
+    });
   };
 
   return (
@@ -645,7 +737,6 @@ export default function AdminDashboard() {
                     <option value="">All Roles</option>
                     <option value="buyer">Buyer</option>
                     <option value="vendor">Vendor</option>
-                    <option value="admin">Admin</option>
                   </select>
 
                   <select
@@ -769,50 +860,21 @@ export default function AdminDashboard() {
                             </span>
                           </td>
                           <td className="px-4 py-4">
-                            <div className="flex gap-2">
+                            {/* <div className="flex gap-2"> */}
                               <button
-                                onClick={() => handleViewUserDetails(user._id)}
+                                type="button"
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  event.stopPropagation();
+                                  handleViewUserDetails(user);
+                                  console.log("jf")
+                                }}
                                 className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 text-sm font-medium"
                                 title="View Details"
                               >
                                 <Eye size={14} />
                               </button>
-                                {normalizedStatus === "submitted" && (
-                                <>
-                                  <button
-                                    onClick={() =>
-                                      handleUpdateKYC(user._id, "approved")
-                                    }
-                                    disabled={actionLoading === user._id}
-                                    className="px-3 py-1 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 text-sm font-medium disabled:opacity-50"
-                                  >
-                                    Approve
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      handleUpdateKYC(user._id, "rejected")
-                                    }
-                                    disabled={actionLoading === user._id}
-                                    className="px-3 py-1 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 text-sm font-medium disabled:opacity-50"
-                                  >
-                                    Reject
-                                  </button>
-                                </>
-                              )}
-                              <button
-                                onClick={() =>
-                                  setDeleteModal({
-                                    isOpen: true,
-                                    type: "user",
-                                    id: user._id,
-                                    name: user.name,
-                                  })
-                                }
-                                className="px-3 py-1 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 text-sm font-medium"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
+                            {/* </div> */}
                           </td>
                         </tr>
                       );
@@ -1295,9 +1357,17 @@ export default function AdminDashboard() {
       )}
 
       {/* User Details Modal */}
-      {userDetailsModal.isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full my-8">
+      {isMounted &&
+        userDetailsModal.isOpen &&
+        createPortal((
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-[200] p-4 overflow-y-auto"
+          onClick={closeUserDetailsModal}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full my-8 relative"
+            onClick={(event) => event.stopPropagation()}
+          >
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between rounded-t-2xl">
               <div className="flex items-center gap-3">
@@ -1309,13 +1379,7 @@ export default function AdminDashboard() {
                 </h3>
               </div>
               <button
-                onClick={() =>
-                  setUserDetailsModal({
-                    isOpen: false,
-                    user: null,
-                    loading: false,
-                  })
-                }
+                onClick={closeUserDetailsModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <XCircle size={24} />
@@ -1324,12 +1388,17 @@ export default function AdminDashboard() {
 
             {/* Modal Body */}
             <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
-              {userDetailsModal.loading ? (
+              {userDetailsModal.loading && !userDetailsModal.user ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
                 </div>
               ) : userDetailsModal.user ? (
                 <div className="space-y-6">
+                  {userDetailsModal.error && (
+                    <div className="rounded-xl border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm font-medium text-yellow-800">
+                      {userDetailsModal.error}
+                    </div>
+                  )}
                   {/* Basic Information */}
                   <div className="bg-gray-50 rounded-xl p-6">
                     <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -1548,19 +1617,16 @@ export default function AdminDashboard() {
                   )}
 
                   {/* KYC Actions */}
-                  {modalStatus === "submitted" && (
+                  {userDetailsModal.user.role !== "admin" &&
+                    modalStatus === "submitted" && (
                     <div className="flex gap-3 pt-4 border-t">
                       <button
                         onClick={async () => {
                           await handleUpdateKYC(
-                            userDetailsModal.user._id,
+                            userDetailsModal.user!._id,
                             "approved",
                           );
-                          setUserDetailsModal({
-                            isOpen: false,
-                            user: null,
-                            loading: false,
-                          });
+                          closeUserDetailsModal();
                         }}
                         disabled={!!actionLoading}
                         className="flex-1 px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
@@ -1571,14 +1637,10 @@ export default function AdminDashboard() {
                       <button
                         onClick={async () => {
                           await handleUpdateKYC(
-                            userDetailsModal.user._id,
+                            userDetailsModal.user!._id,
                             "rejected",
                           );
-                          setUserDetailsModal({
-                            isOpen: false,
-                            user: null,
-                            loading: false,
-                          });
+                          closeUserDetailsModal();
                         }}
                         disabled={!!actionLoading}
                         className="flex-1 px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
@@ -1588,25 +1650,55 @@ export default function AdminDashboard() {
                       </button>
                     </div>
                   )}
-                  {RESETTABLE_KYC_STATUSES.includes(modalStatus) && (
+                  {userDetailsModal.user.role !== "admin" &&
+                    modalStatus === "approved" && (
                     <div className="pt-4 border-t">
                       <button
                         onClick={async () => {
                           await handleUpdateKYC(
-                            userDetailsModal.user._id,
-                            "submitted",
+                            userDetailsModal.user!._id,
+                            "rejected",
                           );
-                          setUserDetailsModal({
-                            isOpen: false,
-                            user: null,
-                            loading: false,
-                          });
+                          closeUserDetailsModal();
                         }}
                         disabled={!!actionLoading}
-                        className="w-full px-6 py-3 bg-yellow-500 text-white rounded-xl font-semibold hover:bg-yellow-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="w-full px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        <XCircle size={18} />
+                        Disapprove KYC
+                      </button>
+                    </div>
+                  )}
+                  {userDetailsModal.user.role !== "admin" &&
+                    modalStatus === "rejected" && (
+                    <div className="flex gap-3 pt-4 border-t">
+                      <button
+                        onClick={async () => {
+                          await handleUpdateKYC(
+                            userDetailsModal.user!._id,
+                            "approved",
+                          );
+                          closeUserDetailsModal();
+                        }}
+                        disabled={!!actionLoading}
+                        className="flex-1 px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        <CheckCircle size={18} />
+                        Approve KYC
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await handleUpdateKYC(
+                            userDetailsModal.user!._id,
+                            "submitted",
+                          );
+                          closeUserDetailsModal();
+                        }}
+                        disabled={!!actionLoading}
+                        className="flex-1 px-6 py-3 bg-yellow-500 text-white rounded-xl font-semibold hover:bg-yellow-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                       >
                         <AlertTriangle size={18} />
-                        Reopen for Review
+                        Reopen Review
                       </button>
                     </div>
                   )}
@@ -1619,7 +1711,7 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
-      )}
+      ), document.body)}
 
       {/* Image Viewer Modal */}
       {selectedImage && (
