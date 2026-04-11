@@ -359,6 +359,7 @@ export default function EditHoardingPage() {
               </Link>
               <button
                 type="submit"
+                form="edit-hoarding-form"
                 disabled={isSubmitting}
                 className="px-10 py-4 bg-blue-600 text-white rounded-[1.5rem] font-black text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group disabled:opacity-50 min-w-[180px]"
               >
@@ -387,7 +388,7 @@ export default function EditHoardingPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit as any)} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <form id="edit-hoarding-form" onSubmit={handleSubmit(onSubmit as any)} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Form Sections */}
           <div className="lg:col-span-8 space-y-8">
             
@@ -446,7 +447,9 @@ export default function EditHoardingPage() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {images.map((img, idx) => (
-                  <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-100 group shadow-sm border border-gray-100"
+                  <div
+                    key={idx}
+                    className="relative aspect-video rounded-2xl overflow-hidden bg-gray-100 group shadow-sm border border-gray-100"
                   >
                     <img src={img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
