@@ -3,7 +3,7 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Phone, MapPin, Twitter, Linkedin, Youtube } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Youtube, Instagram } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function Footer() {
@@ -204,6 +204,15 @@ export default function Footer() {
                 >
                   <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.497h2.039L6.486 3.24H4.298l13.31 17.41z" />
                 </svg>
+              </a>
+              <a
+                href="https://www.instagram.com/hoardspace/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-[linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4)] flex items-center justify-center transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={18} />
               </a>
               <a
                 href="https://www.youtube.com/@HoardSpace"

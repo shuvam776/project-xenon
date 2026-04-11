@@ -74,6 +74,11 @@ export default function Navbar() {
                     Dashboard
                   </Link>
                 )}
+                {user?.role === "buyer" && (
+                  <Link href="/buyer/dashboard?tab=wishlist" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
+                    Wishlist
+                  </Link>
+                )}
                 <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 transition-colors whitespace-nowrap h-full">
                   Explore
                 </Link>
@@ -153,6 +158,15 @@ export default function Navbar() {
                 >
                   Explore
                 </Link>
+                {user?.role === "buyer" && (
+                  <Link 
+                    href="/buyer/dashboard?tab=wishlist" 
+                    onClick={() => setIsMenuOpen(false)}
+                    className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all block w-full text-left"
+                  >
+                    Wishlist
+                  </Link>
+                )}
                 <Link 
                   href="/#how-it-works" 
                   onClick={() => setIsMenuOpen(false)}
