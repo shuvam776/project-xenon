@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Script from "next/script";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
@@ -139,8 +139,9 @@ const getBookingStatusClasses = (status: Booking["status"]) => {
   }
 };
 
-export default function BuyerDashboard() {
+function BuyerDashboardContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<UserData | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -336,6 +337,13 @@ export default function BuyerDashboard() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "wishlist" || tab === "campaigns" || tab === "overview" || tab === "chat") {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -601,7 +609,7 @@ export default function BuyerDashboard() {
     <div className="flex h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 overflow-hidden" style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-100 items-center pt-4 pb-8 px-4 hidden lg:flex lg:flex-col">
+      <aside className="w-60 bg-white border-r border-gray-100 items-center pt-4 pb-8 px-4 hidden lg:flex lg:flex-col">
         <div className="mb-2 w-full px-2"></div>
 
         <nav className="flex-1 w-full space-y-2">
@@ -613,7 +621,7 @@ export default function BuyerDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as TabType)}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group ${
+              className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl transition-all duration-300 group ${
                 activeTab === item.id
                   ? "bg-blue-600 text-white shadow-lg shadow-blue-100 scale-[1.02]"
                   : "text-gray-500 hover:bg-blue-50 hover:text-blue-600"
@@ -640,7 +648,7 @@ export default function BuyerDashboard() {
         <div className="w-full pt-6 border-t border-gray-100">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-4 px-5 py-4 text-red-500 hover:bg-red-50 rounded-2xl transition-all group"
+            className="w-full flex items-center gap-4 px-5 py-3 text-red-500 hover:bg-red-50 rounded-2xl transition-all group"
           >
             <LogOut
               size={22}
@@ -653,7 +661,7 @@ export default function BuyerDashboard() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto relative">
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-8 py-6 flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-10">
             <div className="hidden md:flex relative group">
               <Search
@@ -758,14 +766,14 @@ export default function BuyerDashboard() {
           </div>
         </header>
 
-        <div className="p-10 space-y-10 max-w-7xl mx-auto">
+        <div className="p-8 space-y-8 max-w-7xl mx-auto">
           {activeTab === "overview" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-10">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-6">
               {/* Removed Welcome Banner */}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                  <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6">
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+                  <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4">
                     <IndianRupee size={28} />
                   </div>
                   <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">
@@ -778,8 +786,8 @@ export default function BuyerDashboard() {
                   </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                   <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+                   <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
                     <Package size={28} />
                   </div>
                   <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">
@@ -792,8 +800,8 @@ export default function BuyerDashboard() {
                   </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                  <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-6">
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+                  <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-4">
                     <Clock size={28} />
                   </div>
                   <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">
@@ -807,9 +815,9 @@ export default function BuyerDashboard() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-10">
-                <div className="lg:col-span-2 bg-white rounded-[40px] border border-gray-100 p-10 shadow-sm">
-                  <div className="flex items-center justify-between mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-10">
+                <div className="lg:col-span-2 bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
                     <h3 className="text-2xl font-black text-gray-900">
                       Recent Campaigns
                     </h3>
@@ -855,7 +863,7 @@ export default function BuyerDashboard() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-[40px] border border-gray-100 p-8 shadow-sm space-y-4">
+                <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm space-y-4">
                   <h3 className="text-lg font-black text-gray-900">
                     Quick Tools
                   </h3>
@@ -868,7 +876,10 @@ export default function BuyerDashboard() {
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Explore</span>
                     </Link>
                     <button
-                      onClick={() => setActiveTab("chat")}
+                      onClick={() => {
+                        const event = new CustomEvent("hoardspace-open-support-chat");
+                        window.dispatchEvent(event);
+                      }}
                       className="p-4 bg-gray-50 rounded-2xl flex flex-col items-center gap-2 hover:bg-blue-50 transition-colors"
                     >
                       <MessageSquare className="text-gray-400" size={24} />
@@ -887,14 +898,14 @@ export default function BuyerDashboard() {
               <h2 className="text-4xl font-black text-gray-900 tracking-tight">
                 Your Campaigns
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredBookings.map((booking) => (
                   <div
                     key={booking._id}
-                    className="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden hover:shadow-2xl transition-all p-6 group"
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-2xl transition-all p-5 group"
                   >
-                    <div className="flex gap-6">
-                      <div className="w-24 h-24 bg-gray-200 rounded-2xl overflow-hidden shrink-0 border border-gray-50">
+                    <div className="flex gap-4">
+                      <div className="w-20 h-20 bg-gray-200 rounded-2xl overflow-hidden shrink-0 border border-gray-50">
                         <img
                           src={booking.hoarding?.images[0] || "/placeholder.jpg"}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -991,10 +1002,10 @@ export default function BuyerDashboard() {
           {activeTab === "wishlist" && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
                <h2 className="text-4xl font-black text-gray-900 tracking-tight">Saved for Later</h2>
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredWishlist.map((item) => (
-                    <div key={item._id} className="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden group">
-                       <div className="h-48 relative overflow-hidden">
+                    <div key={item._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+                       <div className="h-44 relative overflow-hidden">
                           <img src={item.images[0] || "/placeholder.jpg"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           <button 
                             onClick={() => removeFromWishlist(item._id)}
@@ -1003,7 +1014,7 @@ export default function BuyerDashboard() {
                              <Trash2 size={18} />
                           </button>
                        </div>
-                       <div className="p-6 space-y-3">
+                       <div className="p-4 space-y-3">
                           <h4 className="font-black text-gray-900 line-clamp-1">{item.name}</h4>
                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
                              <MapPin size={12} /> {item.location.city}
@@ -1099,5 +1110,13 @@ export default function BuyerDashboard() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function BuyerDashboard() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white"><div className="flex flex-col items-center gap-4"><Loader2 className="w-12 h-12 animate-spin text-[#2563eb]" /><p className="text-gray-500 font-medium animate-pulse">Loading Your Portal...</p></div></div>}>
+      <BuyerDashboardContent />
+    </Suspense>
   );
 }
