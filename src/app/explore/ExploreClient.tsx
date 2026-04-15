@@ -52,8 +52,8 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left Sidebar Filters */}
-        <aside className="w-full lg:w-72 flex-shrink-0">
-          <div className="bg-white border-r border-gray-100 lg:pr-6 h-full min-h-[600px]">
+        <aside className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-32 h-fit">
+          <div className="bg-white border text-gray-800 rounded-3xl p-6 h-full shadow-sm border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-6 font-sans">Filters</h2>
 
             {/* LOCATION Filter */}
@@ -142,7 +142,12 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
           {/* Header Bar */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 pb-6 border-b border-gray-100">
             <h1 className="text-3xl md:text-5xl font-sans font-black text-slate-900 tracking-tighter antialiased">
-              Outdoor Advertising <span className="text-[#2563eb]">Agency</span>
+              {searchQuery ? (
+                <span className="capitalize">{searchQuery}</span>
+              ) : (
+                <>Top <span className="text-[#2563eb]">Cities</span></>
+
+              )}
             </h1>
             
             <div className="flex items-center justify-between sm:justify-end gap-4 w-full md:w-auto mt-4 md:mt-0">

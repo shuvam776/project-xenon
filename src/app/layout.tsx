@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "@/components/Navbar";
@@ -8,13 +8,13 @@ import ToastManager from "@/components/ToastManager";
 import AdminChatWidget from "@/components/AdminChatWidget";
 import Script from "next/script";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icon1.png",
   },
 
   alternates: {
@@ -91,6 +91,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <Script id="gtm-script" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];
+            w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+            var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+            j.async=true;
+            j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+            f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-KSCH3Z5Q');
+          `}
+        </Script>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=G-74EDCKD95S`}
           strategy="afterInteractive"
@@ -105,8 +117,16 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
+        className={`${inter.variable} ${outfit.variable} antialiased bg-gray-50`}
       >
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-KSCH3Z5Q"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <ToastManager />
         <Navbar />
         {children}
@@ -120,7 +140,7 @@ export default function RootLayout({
               "@type": "Organization",
               name: "HoardSpace",
               url: "https://hoardspace.in",
-              logo: "https://hoardspace.in/favicon.ico",
+              logo: "https://hoardspace.in/companyLogo/Screenshot 2026-03-02 at 02.10.29.png",
             }),
           }}
         />
